@@ -6,3 +6,4 @@ Este es un proyecto de investigación en el que se desarrollará un sistema de r
 ## Participantes
 - David Chango 
 
+- [ ] Levantamiento del proyecto
