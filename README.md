@@ -1,1 +1,3 @@
-# re-id-project
+# Proyecto de investigación
+### Participantes
+- David Chango 
