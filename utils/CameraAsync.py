@@ -4,7 +4,7 @@ import threading
 import cv2
 
 from utils.Model import MaskRCNN
-from utils.MaskRCNNPedestrian import MaskRCNNPedestrian
+from utils.MaskRCNN import MaskRCNNPedestrian
 from Mask_RCNN.mrcnn import visualize
 import utils.class_names
 from utils.utility import *

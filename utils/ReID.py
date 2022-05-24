@@ -1,4 +1,4 @@
-from utils.Model import MaskRCNN
+from utils.MaskRCNN import MaskRCNN
 def extract_texture():
 
     return None # tensor
@@ -6,9 +6,14 @@ def extract_texture():
 def compare_textur_info(item1, item2, threshold):
     return None
 
-def extract_masks(images):
-    model = MaskRCNN(batch_size=len(images)).loadmodel()
-    mask_rcnn_results = model.detect(images, verbose=0)
+def extract_masks(frame):
+    '''
+    This function detect and segment pedestrians in an image and returns processed image
+    :param frame:
+    :return r, output:
+    '''
+    seg = MaskRCNN().load_model()
+    r, output = seg.segmentFrame(frame)
     # funcion de pame -> salida: mask con las areas agregadas
-    return mask_rcnn_results
+    return r, output
 
