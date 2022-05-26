@@ -1,27 +1,22 @@
 import cv2
-from utils.MaskRCNNPedestrian import MaskRCNNPedestrian
-from tensorflow.python.client import device_lib
-from utils.MaskRCNNPedestrian import MaskRCNNPedestrian
-class_names = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-                 'bus', 'train', 'truck', 'boat', 'traffic light',
-                 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
-                 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear',
-                 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie',
-                 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
-                 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-                 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
-                 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
-                 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza',
-                 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed',
-                 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
-                 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
-                 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
-                 'teddy bear', 'hair drier', 'toothbrush']
-
+from utils.Camera import Camera
+from utils.ReID import *
+import matplotlib.pyplot as plt
+import numpy as np
 if __name__ == '__main__':
-    image = cv2.imread("Datasets/images/25691390_f9944f61b5_z.jpg")
-
-    seg = MaskRCNNPedestrian().load_model()
-    target_classes = seg.select_target_classes(person=True)
-    salida = seg.segmentFrame(image, segment_target_classes=target_classes)[0]
-    # pame funcion -> salida()
+    width = 0
+    height = 0
+    # reading two streamings
+    for i, j in zip(Camera("Datasets/videos/chaplin.mp4").read_video(extract_masks), Camera("Datasets/videos/VIRAT_S_000002.mp4").read_video(extract_masks)):
+        if i.shape[0] > j.shape[0]:
+            height = j.shape[0]
+            width = j.shape[1]
+            i = cv2.resize(i, (width, height))
+        else:
+            height = i.shape[0]
+            width = i.shape[1]
+            j = cv2.resize(j, (width, height))
+        k = np.concatenate((i, j), axis=1)
+        cv2.imshow("Output", k)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
