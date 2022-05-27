@@ -23,5 +23,6 @@ if __name__ == '__main__':
 
     seg = MaskRCNNPedestrian().load_model()
     target_classes = seg.select_target_classes(person=True)
-    salida = seg.segmentFrame(image, segment_target_classes=target_classes)[0]
+    print(seg.segmentFrame(image, segment_target_classes=target_classes).shape)
+
     # pame funcion -> salida()
