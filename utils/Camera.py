@@ -8,8 +8,8 @@ class Camera:
         while self.cap.isOpened():
             ret, frame = self.cap.read()
             if ret:
-                #r, output = extract_masks(frame)
-                yield frame
+                r, output = extract_masks(frame)
+                yield output
                 # cv2.imshow("Output", frame)
                 # if cv2.waitKey(1) & 0xFF == ord('q'):
                 #     break
