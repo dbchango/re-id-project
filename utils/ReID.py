@@ -1,6 +1,6 @@
 from utils.MaskRCNN import MaskRCNN\
 
-seg = MaskRCNN().load_model()
+seg = MaskRCNN()
 
 def extract_texture():
 
@@ -16,7 +16,7 @@ def extract_masks(frame):
     :return results, processed_image:
     """
 
-    r, output = seg.segmentFrame(frame)
+    r, output = seg.segment(frame)
 
     # TODO: add area calculation function (@PAMELA), this function will calculate tha area of
     #  each person mask and add those to previous maskrcnn result

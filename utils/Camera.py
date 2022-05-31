@@ -9,7 +9,7 @@ class Camera:
             ret, frame = self.cap.read()
             if ret:
                 r, output = extract_masks(frame)
-                yield output
+                yield r, frame
                 # cv2.imshow("Output", frame)
                 # if cv2.waitKey(1) & 0xFF == ord('q'):
                 #     break
