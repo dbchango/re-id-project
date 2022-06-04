@@ -1,4 +1,4 @@
-from utils.MaskRCNN import MaskRCNN\
+from utils.MaskRCNN import MaskRCNN
 
 seg = MaskRCNN()
 
