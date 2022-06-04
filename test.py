@@ -11,6 +11,7 @@ if __name__ == '__main__':
     directory_cam1 = 'Datasets/videos/i-LIDS-VID/sequences/cam1/person002'
     directory_cam2 = 'Datasets/videos/i-LIDS-VID/sequences/cam2/person002'
     # reading n streamingss
+
     # for i, j in zip(Camera("Datasets/videos/chaplin.mp4").read_video(extract_masks), Camera("Datasets/videos/VIRAT_S_000002.mp4").read_video(extract_masks)):
     for (r1, o1), (r2, o2) in zip(read_sequence(directory_cam1, extract_masks), read_sequence(directory_cam2, extract_masks)):
 
