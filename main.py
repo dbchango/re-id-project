@@ -1,22 +1,59 @@
-from flask import Flask, render_template, Response
-from utils.CameraAsync import streamVideo
+# from multiprocessing import Pool
+# import torch.multiprocessing as mp
+
+# def f(x):
+#      return x*x
+
+# if __name__ == '__main__':
+#     num_processes = 4
+#     processes = []
+#     for range in range(num_processes):
+#          p = mp.Process(target=f, args=(4,))
+
+#          p.start()
+#          processes.append(p)
+#     for p in processes:
+#          p.join()
+
+# importing the multiprocessing module
+import multiprocessing
+import torch.multiprocessing as mp
 import os
-app = Flask(__name__)
+import time
+def worker1():
+    # printing process id
+    print("ID of process running worker1: {}".format(os.getpid()))
+  
+def worker2():
+    # printing process id
+    print("ID of process running worker2: {}".format(os.getpid()))
+  
+if __name__ == "__main__":
+     i = time.time()
+     # printing main program process id
+     print("ID of main process: {}".format(os.getpid()))
+     p1 = mp.Process(target=worker1)
+     p2 = mp.Process(target=worker2)
+     # creating processes
+     # p1 = multiprocessing.Process(target=worker1)
+     # p2 = multiprocessing.Process(target=worker2)
 
-cameras = [
-    'Datasets\VIRAT_S_000002.mp4',
-    # 'Datasets\VIRAT_S_000200_00_000100_000171.mp4',
-    # 'Datasets\VIRAT_S_000200_01_000226_000268.mp4'
-]
+     # starting processes
+     p1.start()
+     p2.start()
 
-@app.route('/video_feed/<route>', methods=['GET'])
-def video_feed(route):
-    route = route.replace(os.sep, '/')
-    return Response(streamVideo(route), mimetype='multipart/x-mixed-replace; boundary=frame')
+     # process IDs
+     print("ID of process p1: {}".format(p1.pid))
+     print("ID of process p2: {}".format(p2.pid))
 
-@app.route('/', methods=['GET'])
-def index():
-    return render_template('index.html', len=len(cameras), cameras=cameras)
+     # wait until processes are finished
+     p1.join()
+     p2.join()
+     f = time.time()
+     # both processes finished
+     print("Both processes finished execution!")
+     print("Time: {}")
 
-if __name__ == '__main__':
-    app.run()
+     # check if processes are alive
+     print("Process p1 is alive: {}".format(p1.is_alive()))
+     print("Process p2 is alive: {}".format(p2.is_alive()))

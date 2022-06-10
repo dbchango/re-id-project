@@ -1,7 +1,7 @@
-import multiprocessing
+import multiprocessing_testing
 import timeit
 import typing
-from multiprocessing import Lock
+from multiprocessing_testing import Lock
 import cv2
 import numpy as np
 import pafy
