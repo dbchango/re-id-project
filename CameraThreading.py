@@ -42,7 +42,7 @@ def camPreview(src, camID, lock):
     cv2.destroyAllWindows()
 
 
-thread1 = CameraThreading(src='Datasets/videos/chaplin.mp4', op=0, camID="1", lock=lock)
+thread1 = CameraThreading(src='Datasets/Propio/Video/pasillo/cam_1/pasillo_001.mp4', op=0, camID="1", lock=lock)
 
 thread1.start()
 thread1.join()

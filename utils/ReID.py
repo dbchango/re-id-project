@@ -17,6 +17,12 @@ def extract_texture():
 def compare_textur_info(item1, item2, threshold):
     return None
 
+def apply_mask(rgb_img, mask):
+    rgb_img_cp = rgb_img.copy()
+    rgb_img_cp[:, :, 1] = rgb_img[:, :, 1] * mask
+    rgb_img_cp[:, :, 2] = rgb_img[:, :, 2] * mask
+    rgb_img_cp[:, :, 0] = rgb_img[:, :, 0] * mask
+    return rgb_img_cp
 
 def extract_masks(frame):
     """
@@ -88,11 +94,17 @@ def dpm(roi, frame):
 
 
 def lbp(frame):
-
     img_gray = frame[:, :, 0].astype(float) * 0.3 + frame[:, :, 1].astype(float) * 0.59 + frame[:, :, 2].astype(float) * 0.11
-    lbp = feature.local_binary_pattern(img_gray.astype(np.uint8), 8, 1, method="uniform")
-    (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, 8 + 3), range=(0, 8 + 2))
+    return feature.local_binary_pattern(img_gray.astype(np.uint8), 4, 1, method="uniform")
+
+
+def cal_hist(input):
+    (hist, _) = np.histogram(input.ravel(), bins=np.arange(0, 8 + 3), range=(0, 8 + 2))
     hist = hist.astype("float")
     hist /= (hist.sum() + 1e-6)
     return hist
 
+
+def calc_lbph(image):
+    lbp_result = lbp(image)
+    return cal_hist(lbp_result)  # returning lbp histogram
