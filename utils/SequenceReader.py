@@ -1,40 +1,33 @@
 import os
 import cv2
-from utils.ReID import DPM
-from utils.ReID import texture
+from utils.ReID import dpm, calc_lbph, apply_mask
+from matplotlib import pyplot as plt
+
 def read_sequence(path, extract_masks):
     for image_path in os.listdir(path):
         root = os.path.join(path, image_path)
         frame = cv2.imread(root)
+        scale = 10
+        width = int(frame.shape[1] * scale / 100)
+        height = int(frame.shape[0] * scale / 100)
+        frame = cv2.resize(frame, (width, height))
+        frame_cp = frame.copy()
         r, output = extract_masks(frame)
-        if r["rois"] != []:
-            x1,y1,x2,y2,cropc, cropt, cropp = DPM(r,frame)
-            # print(start_point_rc, end_point_rc, start_point_rt, end_point_rt, start_point_rp, end_point_rp)
-            #
-            # Cuadro cabeza
-            # cv2.rectangle(frame, start_point_rc, end_point_rc, (0, 0, 255), 2)
-            #
-            # # Cuadro torso
-            # cv2.rectangle(frame, start_point_rt, end_point_rt, (0, 255, 0), 2)
-            #
-            # # Cuadro Pies
-            # cv2.rectangle(frame, start_point_rp, end_point_rp, (0, 0, 0), 2)
+        if len(r["rois"]) != 0 and len(r["masks"]) != 0:
+            for i in range(len(r["rois"])):
+                # temp_frame = frame_cp.copy()
 
-            #Recortes
-
-            #Cuadro raiz
-            # cv2.imshow('Image', crop)
-
-            # Cuadro cabeza
-            cv2.imshow('Imagec', cropc)
-            texture(cropc)
-
-            # Cuadro torso
-            cv2.imshow('Imaget', cropt)
-            texture(cropt)
-
-            # # Cuadro piernas
-            cv2.imshow('Imagep', cropp)
-            texture(cropp)
-
+                mask = r["masks"][:, :, i].astype(int)
+                temp_frame = apply_mask(frame_cp, mask)
+                h_crop, t_crop, l_crop = dpm(r["rois"][i], temp_frame)
+                plt.imshow(h_crop)
+                plt.imshow(t_crop)
+                plt.imshow(l_crop)
+                plt.show()
+                # Cuadro cabeza
+                head_hg = calc_lbph(h_crop)
+                # Cuadro torso
+                torso_hg = calc_lbph(t_crop)
+                # Cuadro piernas
+                legs_hg = calc_lbph(l_crop)
         yield r, output
