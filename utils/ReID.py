@@ -1,17 +1,29 @@
-#Importamos librerias
+from cv2 import CV_16S
 from utils.MaskRCNN import MaskRCNN
-import numpy as np
+from skimage.feature import local_binary_pattern
 from skimage import feature
+from skimage.color import label2rgb
+import numpy as np
+import matplotlib.pyplot as plt
 import cv2
 
 seg = MaskRCNN()
+
 
 def extract_texture():
 
     return None # tensor
 
+
 def compare_textur_info(item1, item2, threshold):
     return None
+
+def apply_mask(rgb_img, mask):
+    rgb_img_cp = rgb_img.copy()
+    rgb_img_cp[:, :, 1] = rgb_img[:, :, 1] * mask
+    rgb_img_cp[:, :, 2] = rgb_img[:, :, 2] * mask
+    rgb_img_cp[:, :, 0] = rgb_img[:, :, 0] * mask
+    return rgb_img_cp
 
 def extract_masks(frame):
     """
@@ -19,7 +31,6 @@ def extract_masks(frame):
     :param frame:
     :return results, processed_image:
     """
-
     r, output = seg.segment(frame)
 
     # TODO: add area calculation function (@PAMELA), this function will calculate tha area of
@@ -27,43 +38,52 @@ def extract_masks(frame):
 
     return r, output
 
-def DPM(r,frame):
-    # Cuadro raiz
-    x1 = r["rois"][0][0]
-    y1 = r["rois"][0][1]
-    x2 = r["rois"][0][2]
-    y2 = r["rois"][0][3]
 
-    # Cuadro cabeza
-    xc1 = int(x1 + (x2 - x1) / 3)
-    yc = x1
-    xc = y1
-    hc = xc1
-    wc = y2
-    cropc = frame[yc:yc + hc, xc:xc + wc]
+def removing_background(mask, crop):
+    frame_bg = mask.astype(int) * crop
 
-    # Cuadro torso
-    xt1 = int(x1 + (x2 - x1) * (2 / 3))
-    yt = x1 + xc1
-    xt = y1
-    ht = xt1 - xc1
-    wt = y2
-    cropt = frame[yt:yt + ht, xt:xt + wt]
 
-    # Cuadro piernas
-    xp1 = int(x1 + (x2 - x1))
-    yp = xt1
-    xp = y1
-    hp = xp1 - xt1
-    wp = y2
-    cropp = frame[yp:yp + hp, xp:xp + wp]
+def crop_frame(a, b, c, d, frame):
+    """
+    This function will crop a frame using 4 main coordinates
+    :param x1:
+    :param y1:
+    :param x2:
+    :param y2:
+    :param frame:
+    :return: frame crop
+    """
+    return frame[a:b, c:d]
 
-    return cropc,cropt,cropp
 
-def lbp_feature(frame):
-    img_gray = frame[:, :, 0].astype(float) * 0.3 + frame[:, :, 1].astype(float) * 0.59 + frame[:, :, 2].astype(float) * 0.11
-    lbp = feature.local_binary_pattern(img_gray.astype(np.uint8), 8, 1, method="uniform")
-    (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, 8 + 3), range=(0, 8 + 2))
+def dpm(roi, frame):
+    """
+    This function will calculate thee DPM crops (head, torso, legs)
+    :param roi:
+    :param frame:
+    :return: three crops
+    """
+
+    height = abs(roi[2] - roi[0])
+
+    h_crop = crop_frame(roi[0], int(roi[0] + height / 3), roi[1], roi[3], frame)
+    t_crop = crop_frame(int(roi[0] + height / 3), int(roi[0] + height * (2 / 3)), roi[1], roi[3], frame)
+    l_crop = crop_frame(int(roi[0] + height * (2 / 3)), roi[2], roi[1], roi[3], frame)
+
+    return h_crop, t_crop, l_crop
+
+
+def lbp(frame):
+    # img_gray = frame[:, :, 0].astype(float) * 0.3 + frame[:, :, 1].astype(float) * 0.59 + frame[:, :, 2].astype(float) * 0.11
+    
+    img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    print(type(img_gray))
+    
+    return feature.local_binary_pattern(img_gray.astype(np.uint8), 4, 1, method="uniform")
+
+
+def cal_hist(input):
+    (hist, _) = np.histogram(input.ravel(), bins=np.arange(0, 8 + 3), range=(0, 8 + 2))
     hist = hist.astype("float")
     hist /= (hist.sum() + 1e-6)
     return hist
@@ -89,3 +109,9 @@ def mask_area_perimeter(segmask):
     end_area.append(area)
     end_perimeter.append(perimeter)
     return area, perimeter
+
+
+def calc_lbph(image):
+    lbp_result = lbp(image)
+    return cal_hist(lbp_result)  # returning lbp histogram
+

@@ -6,7 +6,6 @@ cython
 matplotlib
 pandas
 scikit-image
-tensorflow==1.15.2
 tensorflow-gpu==1.15.2
 opencv-python
 h5py==2.10.0

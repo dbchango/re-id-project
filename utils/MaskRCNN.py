@@ -1,4 +1,3 @@
-import pixellib
 from pixellib.instance import instance_segmentation
 
 class_names = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
