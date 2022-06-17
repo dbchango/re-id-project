@@ -26,6 +26,6 @@ class MaskRCNN:
         self.target_classes = self.model.select_target_classes(person=True)
 
     def segment(self, frame):
-        r, output = self.model.segmentFrame(frame, segment_target_classes=self.target_classes)
+        r, output = self.model.segmentFrame(frame, segment_target_classes=self.target_classes, show_bboxes=True, extract_segmented_objects= True)
         return r, output
 

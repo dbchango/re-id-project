@@ -8,8 +8,8 @@ import numpy as np
 if __name__ == '__main__':
     width = 0
     height = 0
-    directory_cam1 = 'Datasets/videos/i-LIDS-VID/sequences/cam1/person002'
-    directory_cam2 = 'Datasets/videos/i-LIDS-VID/sequences/cam2/person002'
+    directory_cam1 = 'Datasets/videos/cam1/pame'
+    directory_cam2 = 'Datasets/videos/cam1/pame'
     # reading n streamingss
 
     # for i, j in zip(Camera("Datasets/videos/chaplin.mp4").read_video(extract_masks), Camera("Datasets/videos/VIRAT_S_000002.mp4").read_video(extract_masks)):
