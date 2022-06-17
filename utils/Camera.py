@@ -22,13 +22,13 @@ class Camera:
                     for i in range(len(r["rois"])):
                         mask = r["masks"][:, :, i].astype(int)
                         temp_frame = apply_mask(frame_cp, mask)
-                        plt.imshow(temp_frame)
-                        plt.show()
+
                         h_crop, t_crop, l_crop = dpm(r["rois"][i], temp_frame)
+                        cv2.imshow("", h_crop)
+                        cv2.waitKey(0)
 
                 yield frame_cp
 
             else:
                 break
         self.cap.release()
-

@@ -5,6 +5,8 @@ from utils.ReID import *
 from utils.SequenceReader import read_sequence
 # import matplotlib.pyplot as plt
 import numpy as np
+
+
 if __name__ == '__main__':
     width = 0
     height = 0

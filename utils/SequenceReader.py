@@ -1,7 +1,7 @@
 import os
 import cv2
 from utils.ReID import dpm, calc_lbph, apply_mask
-
+from matplotlib import pyplot as plt
 
 def read_sequence(path, extract_masks):
     for image_path in os.listdir(path):
@@ -20,6 +20,10 @@ def read_sequence(path, extract_masks):
                 mask = r["masks"][:, :, i].astype(int)
                 temp_frame = apply_mask(frame_cp, mask)
                 h_crop, t_crop, l_crop = dpm(r["rois"][i], temp_frame)
+                plt.imshow(h_crop)
+                plt.imshow(t_crop)
+                plt.imshow(l_crop)
+                plt.show()
                 # Cuadro cabeza
                 head_hg = calc_lbph(h_crop)
                 # Cuadro torso
