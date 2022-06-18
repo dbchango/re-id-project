@@ -88,7 +88,30 @@ def cal_hist(input):
     hist /= (hist.sum() + 1e-6)
     return hist
 
+def mask_area_perimeter(segmask):
+    end_area = []
+    end_perimeter=[]
+    #Buscas el contorno
+    contornos,hierarchy = cv2.findContours(segmask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    for i in range (len(contornos)):
+        cv2.drawContours(segmask, contornos, i, (255,0,0), 3)
+    #Buscas el contorno más grande
+    lista_areas = []
+    #calcular area y perimetro
+    for c in contornos:
+        perimeter = cv2.arcLength(c,True)
+        area = cv2.contourArea(c)
+        lista_areas.append(area)
+    mas_grande = contornos[lista_areas.index(max(lista_areas))]
+    #Representas el contorno más grande
+    area = cv2.contourArea(mas_grande)
+    #x,y,w,h = cv2.boundingRect(mas_grande)
+    end_area.append(area)
+    end_perimeter.append(perimeter)
+    return area, perimeter
+
 
 def calc_lbph(image):
     lbp_result = lbp(image)
     return cal_hist(lbp_result)  # returning lbp histogram
+

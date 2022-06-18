@@ -4,6 +4,7 @@ Pillow
 pixellib
 cython
 matplotlib
+pandas
 scikit-image
 tensorflow-gpu==1.15.2
 opencv-python
