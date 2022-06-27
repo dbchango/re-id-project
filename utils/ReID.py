@@ -1,22 +1,7 @@
-from cv2 import CV_16S
-from utils.MaskRCNN import MaskRCNN
-from skimage.feature import local_binary_pattern
 from skimage import feature
-from skimage.color import label2rgb
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
 
-seg = MaskRCNN()
-
-
-def extract_texture():
-
-    return None # tensor
-
-
-def compare_textur_info(item1, item2, threshold):
-    return None
 
 def apply_mask(rgb_img, mask):
     rgb_img_cp = rgb_img.copy()
@@ -24,19 +9,6 @@ def apply_mask(rgb_img, mask):
     rgb_img_cp[:, :, 2] = rgb_img[:, :, 2] * mask
     rgb_img_cp[:, :, 0] = rgb_img[:, :, 0] * mask
     return rgb_img_cp
-
-def extract_masks(frame):
-    """
-    This function detect and segment pedestrians in an image and returns processed image
-    :param frame:
-    :return results, processed_image:
-    """
-    r, output = seg.segment(frame)
-
-    # TODO: add area calculation function (@PAMELA), this function will calculate tha area of
-    #  each person mask and add those to previous maskrcnn result
-
-    return r, output
 
 
 def removing_background(mask, crop):
@@ -75,10 +47,9 @@ def dpm(roi, frame):
 
 def lbp(frame):
     # img_gray = frame[:, :, 0].astype(float) * 0.3 + frame[:, :, 1].astype(float) * 0.59 + frame[:, :, 2].astype(float) * 0.11
-    
+
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    print(type(img_gray))
-    
+
     return feature.local_binary_pattern(img_gray.astype(np.uint8), 4, 1, method="uniform")
 
 

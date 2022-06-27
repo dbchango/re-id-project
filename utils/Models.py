@@ -1,78 +1,94 @@
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D
+import keras.layers
+from keras.models import Model
+from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, Input
 from keras.layers.normalization import BatchNormalization
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 
 
-def alexnet_model():
+def vgg_net(input_shape=(64, 64, 1)):
+
     model = Sequential()
 
-    # 1st conv layer
-    model.add(Conv2D(filters=96, input_shape=(32, 32, 3), kernel_size=(11, 11), strides=(4, 4), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same'))
+    # block
+    model.add(Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same', input_shape=input_shape))
+    model.add(Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), activation='relu'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    # 2nd conv layer
-    model.add(Conv2D(filters=256, kernel_size=(5, 5), strides=(1, 1), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same'))
+    # block
+    model.add(Conv2D(filters=128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    # 3rd conv layer
-    model.add(Conv2D(filters=384, kernel_size=(3, 3), strides=(1, 1), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
+    # block
+    model.add(Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    # 4th conv layer
-    model.add(Conv2D(filters=384, kernel_size=(3, 3), strides=(1, 1), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
+    # block
+    model.add(Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    # 5th conv layer
-    model.add(Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), padding='same'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same'))
+    # block
+    model.add(Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    # FC layers
+    # block N° 6
+
     model.add(Flatten())
-
-    # 1st FC layer
-    model.add(Dense(4096, input_shape=(32, 32, 3, )))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-
-    # drop out layer
-    model.add(Dropout(0.4))
-
-    # 2nd FC layer
-    model.add(Dense(4096))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-
-    # drop out layer
-    model.add(Dropout(0.4))
-
-    # 3rd FC layer
-    model.add(Dense(1000))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-
-    # drop out layer
-    model.add(Dropout(0.3))
-
-    # output layer
-    model.add(Dense(7))
-    model.add(BatchNormalization())
-    model.add(Activation('softmax'))
-
-    model.summary()
+    model.add(Dense(4096, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(4096, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(7, activation='relu'))
 
     return model
 
+
+def mlp(input_shape=(64, 64, 1)):
+
+    model = Sequential()
+    model.add(Flatten(input_shape=input_shape))
+    model.add(Dense(4096, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(4096, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(7, activation='relu'))
+
+    return model
+
+
+def a_p_branch(input_shape):
+
+    inputs = Input(input_shape)
+    x = Dense(100, activation='relu')(inputs)
+    x = Dense(100, activation='relu')(x)
+
+
+# def multi_input_net(input_shape=(64, 64, 1))
+
+
+def generate_image_dataset(train_data_path, test_data_path, validation_path, target_size):
+    gen = ImageDataGenerator()
+    train_gen = gen.flow_from_directory(train_data_path, target_size=target_size, class_mode='categorical', shuffle=False, color_mode='grayscale')
+    validation_gen = gen.flow_from_directory(validation_path, target_size=target_size, class_mode='categorical', shuffle=False, color_mode='grayscale')
+    test_gen = gen.flow_from_directory(test_data_path, target_size=target_size, class_mode='categorical', shuffle=False, color_mode='grayscale')
+    return train_gen, test_gen, validation_gen
+
+
+def complete_image_dataset_loading(train_data_path, test_data_path, validation_path, target_size):
+    from processing import load_image_dataset
+    (rgb_train) = load_image_dataset('Datasets/espe/base/train', target_size, True)
+    (rgb_test) = load_image_dataset('Datasets/espe/base/test', target_size, True)
+    (rgb_validation) = load_image_dataset('Datasets/espe/base/validation', target_size, True)
+    return rgb_train, rgb_test, rgb_validation
 
 def data_generator(train_data_path, validation_data_path):
     im_width, im_height = 32, 32

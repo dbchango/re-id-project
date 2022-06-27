@@ -6,7 +6,9 @@ from utils.MaskRCNN import MaskRCNN
 import numpy as np
 import cv2
 from utils.ReID import mask_area_perimeter
+
 seg = MaskRCNN()
+
 def create_dataset_area_mask(input_images_path):
   files_names= os.listdir(input_images_path)
   dataset_list = []
@@ -21,8 +23,10 @@ def create_dataset_area_mask(input_images_path):
     test = np.array(silhouette, dtype='uint8')
     area, perimeter = mask_area_perimeter(test)
     person_class_name = Path(image_path).stem
-    df=df.append({'area' : area , 'perimeter' : perimeter, 'person_class_name' : person_class_name} , ignore_index=True)
+    df = df.append({'area': area, 'perimeter': perimeter, 'person_class_name': person_class_name}, ignore_index=True)
+
   return df
+
 
 if __name__ == '__main__':
     dataset_mask = create_dataset_area_mask("./Datasets/videos/cam1/pame")

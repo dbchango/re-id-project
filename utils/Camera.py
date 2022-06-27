@@ -1,6 +1,5 @@
 import cv2
 from utils.ReID import dpm, lbp, apply_mask
-from matplotlib import pyplot as plt
 
 class Camera:
     def __init__(self, src=0):
