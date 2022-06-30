@@ -21,8 +21,8 @@ def save_frame(path, frame):
     :return: None
     """
     print('Saving file on {}'.format(path))
-    # cv2.imwrite(path, frame)
-    Image.fromarray(frame).save(path)
+    cv2.imwrite(path, frame)
+    # Image.fromarray(frame).save(path)
 
 
 def slice_labels(df):
@@ -32,8 +32,9 @@ def slice_labels(df):
     :return: x, y Histograms data and labels
     """
     from keras.utils import to_categorical
-    x = df.iloc[:, :17]
-    y = df.iloc[:, 18]
+    df_top = df.shape[1] - 1
+    x = df.iloc[:, :df_top]
+    y = df.iloc[:, df_top]
     y = to_categorical(y)
     return x, y
 
@@ -152,12 +153,11 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
 
                 cropped_frame = lbp_2.lbp(cropped_frame)
                 lbp_image = cropped_frame.astype('uint8')
-                # cropped_frame = cv2.cvtColor(cropped_frame.astype('uint8') * 255, cv2.COLOR_GRAY2RGB)
                 cropped_frame = cv2.cvtColor(cropped_frame.astype('uint8') * 255, cv2.COLOR_GRAY2RGB)
                 result_name = os.path.join(target_person_root, name)
 
                 data.append([area, perimeter, class_id])
-                save_frame(result_name, lbp_image)
+                save_frame(result_name, cropped_frame)
 
         csv_path_pr = target_person_root + '/hist_{}.csv'.format(person)
         write_csv(path=csv_path_pr, header=None, data=histograms)
@@ -193,7 +193,6 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
 
             print("Opening ", source_path)
             image = cv2.imread(source_path)
-            image_cp = image.copy()
             image_cp = image.copy()
             r, _ = model.segment(image)
 

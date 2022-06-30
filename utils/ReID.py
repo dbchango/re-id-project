@@ -59,6 +59,7 @@ def cal_hist(input):
     hist /= (hist.sum() + 1e-6)
     return hist
 
+
 def mask_area_perimeter(segmask):
     end_area = []
     end_perimeter=[]

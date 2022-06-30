@@ -15,12 +15,9 @@ class LocalBinaryPatterns:
 
         return lbp
 
-    def describe(self, image, eps=1e-7):
+    def describe(self, image):
         lbp_image = self.lbp(image)
-
-        (hist, _) = np.histogram(lbp_image.ravel(), bins=np.arange(0, self.numPoints + 3), range=(0, self.numPoints + 2))
+        n_bins = int(lbp_image.max() + 1)
+        (hist, _) = np.histogram(lbp_image.ravel(), n_bins, [0, n_bins], density=True)
         # hist, bins = np.histogram(lbp_image.ravel(), 256, [0, 256])
-        hist = hist.astype("float")
-        hist /= (hist.sum() + eps)
-
         return hist
