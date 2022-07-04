@@ -22,14 +22,14 @@ def read_sequence(path, extract_masks):
                 # temp_frame = frame_cp.copy()
                 mask = r["masks"][:, :, i].astype('uint8')
                 area, perimeter = mask_area_perimeter(mask)
-                print(area, perimeter)
                 temp_frame = apply_mask(frame_cp, mask)
-                h_crop, t_crop, l_crop = dpm(r["rois"][i], temp_frame)
-                # Cuadro cabeza
-                head_hg = calc_lbph(h_crop)
-                # Cuadro torso
-                torso_hg = calc_lbph(t_crop)
-                # Cuadro piernas
-                legs_hg = calc_lbph(l_crop)
+
+                # h_crop, t_crop, l_crop = dpm(r["rois"][i], temp_frame)
+                # # Cuadro cabeza
+                # head_hg = calc_lbph(h_crop)
+                # # Cuadro torso
+                # torso_hg = calc_lbph(t_crop)
+                # # Cuadro piernas
+                # legs_hg = calc_lbph(l_crop)
         yield r, output
 

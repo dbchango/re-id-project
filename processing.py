@@ -154,7 +154,7 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
 
                 histograms.append(hist)
 
-                cropped_frame = lbp_2.lbp(cropped_frame)
+                masked_image = lbp_2.lbp(cropped_frame)
                 lbp_image = cropped_frame.astype('uint8')
                 cropped_frame = cv2.cvtColor(cropped_frame.astype('uint8') * 255, cv2.COLOR_GRAY2RGB)
                 result_name = os.path.join(target_person_root, name)
