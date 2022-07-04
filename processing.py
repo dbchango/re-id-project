@@ -9,7 +9,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from utils.MaskRCNN import MaskRCNN
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
 from PIL import Image
-
+from utils.histogram_color_RGB import RGBHistogram
 aug_generator = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1, zoom_range=0.1, horizontal_flip=True)
 
 
@@ -332,3 +332,46 @@ def generate_dpm_dataset(parent_root, target_root):
 
                     print('Successfully created files')
 
+def generate_dataset_histogram_color(parent_root,target_root,csv_path):
+    data = []  # Will hold the RGB feature vectors of each image.
+    descriptor = RGBHistogram([8, 8, 8])
+    model = MaskRCNN()
+    header = ['area', 'perimeter', 'class']
+    for person in os.listdir(parent_root):
+        person_root = os.path.join(parent_root, person)
+        target_person_root = os.path.join(target_root, person)
+        print("Working on: ", person_root)
+        counter = 0
+        histograms = []
+        for instance in os.listdir(person_root):
+            if instance.endswith('jpg') is False:
+                continue
+            counter += 1
+            name = 'person_{}_{}.jpg'.format(person, counter)
+            print('Processing {} ...'.format(name))
+            source_path = os.path.join(person_root, instance)
+            print("Opening ", source_path)
+            image = cv2.imread(source_path)
+            image_cp = image.copy()
+            r, _ = model.segment(image)
+            if len(r['masks']) != 0 and len(r['rois']) != 0:
+                # for i in range(len(r["rois"])):
+                mask = r["masks"][:, :, 0].astype('uint8')
+                mask_cp = mask.copy()
+                area, perimeter = mask_area_perimeter(mask_cp)
+                class_id = person
+
+                masked_image = apply_mask(image_cp, mask)
+                x1, y1 = r["rois"][0][0], r["rois"][0][1]
+                x2, y2 = r["rois"][0][2], r["rois"][0][3]
+                cropped_frame = crop_frame(x1, x2, y1, y2, masked_image)
+                hist = descriptor.describe(cropped_frame)
+                #print(hist)
+                hist = np.append(hist, person)
+                histograms.append(hist)
+                result_name = os.path.join(target_person_root, name)
+                data.append([area, perimeter, class_id])
+
+        csv_path_pr = target_person_root + '/hist_{}.csv'.format(person)
+        write_csv(path=csv_path_pr, header=None, data=histograms)
+    write_csv(csv_path, header, data)

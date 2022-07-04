@@ -99,7 +99,17 @@ def lbp_histogram_branch():
     # model.add(keras.layers.Dense(7, activation='softmax'))
 
     return model
+def color_histogram_branch():
 
+    model = keras.Sequential()
+    model.add(keras.layers.Dense(100, input_shape=(512, ), activation='relu'))
+    model.add(keras.layers.Dense(4096, activation='relu'))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(4096, activation='relu'))
+    # model.add(keras.layers.Dropout(0.5))
+    # model.add(keras.layers.Dense(7, activation='softmax'))
+
+    return model
 
 def silhouette_features_branch():
     model = keras.Sequential()
@@ -131,7 +141,19 @@ def multi_input_model():
 
     return model
 
+def multi_input_model_color_silouethe():
+    a = color_histogram_branch()
+    b = silhouette_features_branch()
+    c = image_branch()
+    fussion = keras.layers.concatenate([a.output, b.output, c.output])
+    d = keras.layers.Dense(4096, activation='relu')(fussion)
+    d = keras.layers.Dropout(0.5)(d)
+    d = keras.layers.Dense(4096, activation='relu')(d)
+    d = keras.layers.Dropout(0.5)(d)
+    d = keras.layers.Dense(7, activation='softmax')(d)
+    model = keras.models.Model(inputs=[a.input, b.input, c.input], outputs=d)
 
+    return model
 def lbp_image(hp):
     model = keras.Sequential()
     model.add(keras.layers.Flatten(input_shape=(64, 64)))
