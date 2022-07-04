@@ -51,12 +51,15 @@ def load_image_dataset(path, size, gray_scale):
     images = []
     for person in sorted(os.listdir(path)):
         person_path = os.path.join(path, person)
+        if person.endswith('.csv'):
+            continue
         for instance in os.listdir(person_path):
             if instance.endswith('.jpg') is False:
                 continue
             instance_path = os.path.join(person_path, instance)
-            image = cv2.imread(instance_path, cv2.COLOR_BGR2RGB)
+            image = cv2.imread(instance_path)
             image = cv2.resize(image, size)
+
             if gray_scale:
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 image = image.reshape(size[0], size[1], 1)
@@ -157,7 +160,7 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
                 result_name = os.path.join(target_person_root, name)
 
                 data.append([area, perimeter, class_id])
-                save_frame(result_name, cropped_frame)
+                save_frame(result_name, lbp_image)
 
         csv_path_pr = target_person_root + '/hist_{}.csv'.format(person)
         write_csv(path=csv_path_pr, header=None, data=histograms)
