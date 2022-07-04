@@ -1,6 +1,8 @@
 
 from keras.models import Sequential
 from tensorflow import keras
+from tensorflow.keras import layers
+import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
 
@@ -48,42 +50,65 @@ def vgg_net(input_shape=(64, 64, 1)):
     return model
 
 
+def silhouette_classifier_model():
+    model = keras.Sequential()
+    model.add(keras.layers.Dense(4, input_shape=(2,), activation='relu'))
+    model.add(keras.layers.Dense(32, activation='relu'))
+    # model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(32, activation='relu'))
+    # model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(64, activation='relu'))
+    # model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(64, activation='relu'))
+    # model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(800, activation='relu'))
+    # model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(7, activation='softmax'))
+    loss_function = tf.keras.losses.CategoricalCrossentropy()
+    optimization_function = tf.keras.optimizers.Adagrad(lr=1e-3)
+    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
+    return model
+
+
+def lbp_image_classification(input_shape):
+    model = keras.Sequential()
+    model.add(keras.layers.Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape))
+    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(7, activation='softmax'))
+
+    loss_function = tf.keras.losses.CategoricalCrossentropy()
+    optimization_function = tf.keras.optimizers.RMSprop(lr=1e-3)
+    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
+    return model
+
+
+def lbp_histogram(input_shape):
+    model = keras.Sequential()
+    model.add(keras.layers.Dense(52, input_shape=input_shape, activation='relu'))
+    model.add(keras.layers.Dense(104, activation='relu'))
+    model.add(keras.layers.Dense(104, activation='relu'))
+    model.add(keras.layers.Dense(104, activation='relu'))
+    model.add(keras.layers.Dense(7, activation='softmax'))
+    loss_function = tf.keras.losses.CategoricalCrossentropy()
+    optimization_function = tf.keras.optimizers.RMSprop(1e-2)
+    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
+    return model
+
+
 def image_branch():
 
     model = keras.Sequential()
 
-    # block
-    model.add(keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same',
-                                  input_shape=(64, 64, 1)))
-    model.add(keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), activation='relu'))
-    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
-
-    # block
-    model.add(keras.layers.Conv2D(filters=128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=128, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
-
-    # block
-    model.add(keras.layers.Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=256, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
-
-    # block
-    model.add(keras.layers.Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
-
-    # block
-    model.add(keras.layers.Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.Conv2D(filters=512, kernel_size=(3, 3), strides=(1, 1), activation='relu', padding='same'))
-    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
-
-    # block N° 6
-
-    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Flatten(input_shape=(40, 40, 1)))
+    model.add(keras.layers.Dense(1600, activation='relu'))
+    model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(1600, activation='relu'))
+    model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(800, activation='relu'))
 
     return model
 
@@ -91,12 +116,12 @@ def image_branch():
 def lbp_histogram_branch():
 
     model = keras.Sequential()
-    model.add(keras.layers.Dense(100, input_shape=(26, ), activation='relu'))
-    model.add(keras.layers.Dense(4096, activation='relu'))
-    model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.Dense(4096, activation='relu'))
-    # model.add(keras.layers.Dropout(0.5))
-    # model.add(keras.layers.Dense(7, activation='softmax'))
+    model.add(keras.layers.Dense(52, input_shape=(26, ), activation='relu'))
+    model.add(keras.layers.Dense(104, activation='relu'))
+    model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(104, activation='relu'))
+    model.add(keras.layers.Dropout(0.8))
+    model.add(keras.layers.Dense(104, activation='relu'))
 
     return model
 
@@ -104,13 +129,12 @@ def lbp_histogram_branch():
 def silhouette_features_branch():
     model = keras.Sequential()
     model.add(keras.layers.Dense(4,  input_shape=(2, ), activation='relu'))
-    model.add(keras.layers.Dense(16, activation='relu'))
-    model.add(keras.layers.Dropout(0.8))
-    model.add(keras.layers.Dense(16, activation='relu'))
-    model.add(keras.layers.Dropout(0.8))
     model.add(keras.layers.Dense(32, activation='relu'))
-    model.add(keras.layers.Dropout(0.8))
     model.add(keras.layers.Dense(32, activation='relu'))
+    model.add(keras.layers.Dense(64, activation='relu'))
+    model.add(keras.layers.Dense(64, activation='relu'))
+    # model.add(keras.layers.Dense(16, activation='relu'))
+    # model.add(keras.layers.Dense(8, activation='relu'))
     # model.add(keras.layers.Dropout(0.8))
     # model.add(keras.layers.Dense(7, activation='softmax'))
 
@@ -118,17 +142,19 @@ def silhouette_features_branch():
 
 
 def multi_input_model():
-    a = lbp_histogram_branch()
+    # a = lbp_histogram_branch()
     b = silhouette_features_branch()
     c = image_branch()
-    fussion = keras.layers.concatenate([a.output, b.output, c.output])
-    d = keras.layers.Dense(4096, activation='relu')(fussion)
-    d = keras.layers.Dropout(0.5)(d)
-    d = keras.layers.Dense(4096, activation='relu')(d)
-    d = keras.layers.Dropout(0.5)(d)
+    fussion = keras.layers.concatenate([b.output, c.output])
+    d = keras.layers.Dense(800, activation='relu')(fussion)
+    d = keras.layers.Dropout(0.8)(d)
+    d = keras.layers.Dense(800, activation='relu')(d)
+    d = keras.layers.Dropout(0.8)(d)
     d = keras.layers.Dense(7, activation='softmax')(d)
-    model = keras.models.Model(inputs=[a.input, b.input, c.input], outputs=d)
-
+    model = keras.models.Model(inputs=[b.input, c.input], outputs=d)
+    loss_function = tf.keras.losses.CategoricalCrossentropy()
+    optimization_function = tf.keras.optimizers.RMSprop(lr=1e-4)
+    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
     return model
 
 
@@ -188,3 +214,14 @@ def complete_image_dataset_loading(train_data_path, test_data_path, validation_p
 #     validation_gen = datagen.flow_from_directory(validation_data_path, target_size=(im_width, im_height), class_mode='categorical', batch_size=batch_size)
 #
 #     return train_gen, validation_gen
+
+def mlp(input_shape):
+
+    model = keras.Sequential()
+    model.add(layers.Dense(4096, activation='relu', input_shape=(input_shape)))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(4096, activation='relu'))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(7, activation='relu'))
+
+    return model
