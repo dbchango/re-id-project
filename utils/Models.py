@@ -86,6 +86,17 @@ def lbp_image_classification(input_shape):
     return model
 
 
+def mask_images_classification(input_shape):
+    model = keras.Sequential()
+    model.add(keras.layers.Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape))
+    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(7, activation='softmax'))
+
+
 def lbp_histogram(input_shape):
     model = keras.Sequential()
     model.add(keras.layers.Dense(52, input_shape=input_shape, activation='relu'))
@@ -171,14 +182,16 @@ def multi_input_model_color_silouethe():
     a = color_histogram_branch()
     b = silhouette_features_branch()
     c = image_branch()
-    fussion = keras.layers.concatenate([a.output, b.output, c.output])
-    d = keras.layers.Dense(4096, activation='relu')(fussion)
-    d = keras.layers.Dropout(0.5)(d)
-    d = keras.layers.Dense(4096, activation='relu')(d)
-    d = keras.layers.Dropout(0.5)(d)
+    fussion = keras.layers.concatenate([b.output, c.output])
+    d = keras.layers.Dense(800, activation='relu')(fussion)
+    d = keras.layers.Dropout(0.8)(d)
+    d = keras.layers.Dense(800, activation='relu')(d)
+    d = keras.layers.Dropout(0.8)(d)
     d = keras.layers.Dense(7, activation='softmax')(d)
-    model = keras.models.Model(inputs=[a.input, b.input, c.input], outputs=d)
-
+    model = keras.models.Model(inputs=[b.input, c.input], outputs=d)
+    loss_function = tf.keras.losses.CategoricalCrossentropy()
+    optimization_function = tf.keras.optimizers.RMSprop(lr=1e-4)
+    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
     return model
 def lbp_image(hp):
     model = keras.Sequential()

@@ -9,6 +9,7 @@ class IdentificationModel:
         self.classes_names = pd.read_csv(classes_names_path, header=None)
 
     def identify(self, x):
+        print(x.shape)
         prediction = self.model.predict(x)
         class_name = self.get_class_name(prediction)
         return class_name
