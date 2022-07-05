@@ -105,6 +105,34 @@ def write_csv(path, header, data):
         writer.writerows(data)
 
 
+def generate_masks_datasets(parent_root, target_root):
+    model = MaskRCNN()
+    for person in os.listdir(parent_root):
+        person_root = os.path.join(parent_root, person)
+        target_person_root = os.path.join(target_root, person)
+        print("Working on: ", person_root)
+        counter = 0
+        for instance in os.listdir(person_root):
+            if instance.endswith('jpg') is False:
+                continue
+            counter += 1
+            name = 'person_{}_{}.jpg'.format(person, counter)
+            print('Processing {} ...'.format(name))
+            source_path = os.path.join(person_root, instance)
+            print("Opening ", source_path)
+            image = cv2.imread(source_path)
+            # image_cp = image.copy()
+            r, _ = model.segment(image)
+            if len(r['masks']) != 0 and len(r['rois']) != 0:
+                mask = r["masks"][:, :, 0].astype('uint8') * 255
+                mask_cp = mask.copy()
+                x1, y1 = r["rois"][0][0], r["rois"][0][1]
+                x2, y2 = r["rois"][0][2], r["rois"][0][3]
+                cropped_frame = crop_frame(x1, x2, y1, y2, mask_cp)
+                result_name = os.path.join(target_person_root, name)
+                save_frame(result_name, cropped_frame)
+
+
 def generate_dataset_with_lbp(parent_root, target_root, csv_path):
     """
     This function generate image dataset in function of given parent root.

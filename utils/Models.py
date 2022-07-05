@@ -86,6 +86,17 @@ def lbp_image_classification(input_shape):
     return model
 
 
+def mask_images_classification(input_shape):
+    model = keras.Sequential()
+    model.add(keras.layers.Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape))
+    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(7, activation='softmax'))
+
+
 def lbp_histogram(input_shape):
     model = keras.Sequential()
     model.add(keras.layers.Dense(52, input_shape=input_shape, activation='relu'))
