@@ -104,7 +104,7 @@ def write_csv(path, header, data):
             writer.writerow(header)
         writer.writerows(data)
 
-
+#generate silhouette
 def generate_masks_datasets(parent_root, target_root):
     model = MaskRCNN()
     for person in os.listdir(parent_root):
@@ -195,7 +195,7 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
 
     write_csv(csv_path, header, data)
 
-
+#generate mask
 def generate_masked_dataset(parent_root, target_root, csv_path):
     """
     This function will generate cropped images dataset with background removal
