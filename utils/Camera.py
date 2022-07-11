@@ -3,7 +3,7 @@ from utils.ReID import dpm, lbp, apply_mask, crop_frame
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
 from processing import write_csv
 import numpy as np
-
+from utils.metrics.metrics import Timer
 
 
 class Camera:
@@ -14,7 +14,9 @@ class Camera:
         self.cap.set(cv2.CAP_PROP_FPS, 25)
         lbp_2 = LocalBinaryPatterns(3)
         detections = []
-
+        detection_time_measures = []
+        detector_timer = Timer()
+        identificator_timer = Timer()
         while self.cap.isOpened():
             ret, frame = self.cap.read()
 
@@ -24,7 +26,11 @@ class Camera:
                 height = int(frame.shape[0] * scale / 100)
                 frame = cv2.resize(frame, (width, height))
                 frame_cp = frame.copy()
+                detector_timer.start()
                 r, _ = extract_masks(frame)
+                detector_timer.end()
+                print('Detection time: {:.4f}'.format(detector_timer.calculate_time()))
+                detection_time_measures.append(detector_timer.time)
                 if len(r["rois"]) != 0 and len(r["masks"]) != 0:
                     # for i in range(len(r["rois"])):
                     mask = r["masks"][:, :, 0].astype(int) * 255

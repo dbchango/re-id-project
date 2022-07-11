@@ -32,7 +32,7 @@ def videoGetter(source=0):
     print("Is opened: ", video_getter.stream.isOpened())
     model = MaskRCNN().loadmodel()
     class_names = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-                   'bus', 'train', 'truck', 'boat', 'traffic light',
+                   'bus', 'training', 'truck', 'boat', 'traffic light',
                    'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
                    'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear',
                    'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie',

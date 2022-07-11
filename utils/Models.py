@@ -224,7 +224,7 @@ def generate_image_dataset(train_data_path, test_data_path, validation_path, tar
 
 def complete_image_dataset_loading(train_data_path, test_data_path, validation_path, target_size):
     from processing import load_image_dataset
-    (rgb_train) = load_image_dataset('Datasets/espe/base/train', target_size, True)
+    (rgb_train) = load_image_dataset('Datasets/espe/base/training', target_size, True)
     (rgb_test) = load_image_dataset('Datasets/espe/base/test', target_size, True)
     (rgb_validation) = load_image_dataset('Datasets/espe/base/validation', target_size, True)
     return rgb_train, rgb_test, rgb_validation

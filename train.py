@@ -26,9 +26,9 @@ def load_slt_dataset(path):
 def main():
     size = (40, 40, 1)
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--data", default='Datasets/espe/lbp_histograms - copia', type=str, help="Dataset path, it could be divided in three parts: train, "
+    parser.add_argument("-d", "--data", default='Datasets/espe/lbp_histograms - copia', type=str, help="Dataset path, it could be divided in three parts: training, "
                                                        "validation and test. Ex: Datasets/path")
-    parser.add_argument("-m", "--model", default='default', type=str, help="Type the model name that you need to train.")
+    parser.add_argument("-m", "--model", default='default', type=str, help="Type the model name that you need to training.")
     parser.add_argument("-mp", "--model_path", type=str, help="Path to save trained model.")
     parser.add_argument("-lp", "--logs_path", type=str, help="Path to save training logs.")
     parser.add_argument("-lbp", "--lbp_dataset", action='store_true', help="Use lbp dataset?.")
@@ -38,7 +38,7 @@ def main():
 
     print("[INFO] loading dataset ...")
     base_path = args.data
-    train_path, validation_path, test_path = base_path + '/train', base_path + '/validation', base_path + '/test'
+    train_path, validation_path, test_path = base_path + '/training', base_path + '/validation', base_path + '/test'
 
     if args.lbp_dataset:
         print("[INFO] loading lbp images dataset")
@@ -54,7 +54,7 @@ def main():
 
     if args.silhouette_dataset:
         print("[INFO] loading silhouette dataset")
-        x_slt_train, y_slt_train = load_slt_dataset(train_path + '/train.csv')
+        x_slt_train, y_slt_train = load_slt_dataset(train_path + '/training.csv')
         x_slt_validation, y_slt_validation = load_slt_dataset(validation_path + '/validation.csv')
         x_slt_test, y_slt_test = load_slt_dataset(test_path + '/test.csv')
 
