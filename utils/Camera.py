@@ -15,6 +15,7 @@ class Camera:
         lbp_2 = LocalBinaryPatterns(3)
         detections = []
         detection_time_measures = []
+        identification_time_measures = []
         detector_timer = Timer()
         identificator_timer = Timer()
         while self.cap.isOpened():
@@ -49,8 +50,11 @@ class Camera:
 
                     mask_cp = mask_cp.reshape(40, 40, 1)
                     lbp_image = lbp_image.reshape(40, 40, 1)
-
+                    identificator_timer.start()
                     predicted_name, accuracy = id_model.identify([[lbp_image], [mask_cp]])
+                    identificator_timer.end()
+                    print('Detection time: {:.4f}'.format(identificator_timer.calculate_time()))
+                    identification_time_measures.append(identificator_timer.time)
                     detections.append([predicted_name, accuracy])
                     bbox_height = abs(x1 - x2)
                     cv2.putText(frame_cp, f'{predicted_name}', (y1, x1), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=bbox_height/300, color=(0, 255, 0),thickness=1)
