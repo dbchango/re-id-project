@@ -70,6 +70,30 @@ def silhouette_classifier_model():
     return model
 
 
+def base_image_branch(input_shape):
+    input = keras.Input(shape=input_shape)
+    x = keras.layers.Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape)(input)
+    x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2))(x)
+    x = keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape)(x)
+    x = keras.layers.MaxPooling2D((2, 2), strides=(2, 2))(x)
+    x = keras.layers.Flatten()(x)
+    model = keras.models.Model(inputs=input, outputs=x)
+    return model
+
+
+def prototype_model_for_reid(input_shape):
+    a = image_branch(input_shape)
+    b = image_branch(input_shape)
+    fussion = keras.layers.concatenate([a.output, b.output])
+    c = keras.layers.Dense(7, activation='softmax')(fussion)
+    model = keras.models.Model(inputs=[a.input, b.input], outputs=c)
+    loss_function = tf.keras.losses.CategoricalCrossentropy()
+    optimization_function = tf.keras.optimizers.RMSprop(lr=1e-3)
+    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
+    return model
+
+
+
 def lbp_image_classification(input_shape):
     model = keras.Sequential()
     model.add(keras.layers.Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape))
@@ -110,17 +134,16 @@ def lbp_histogram(input_shape):
     return model
 
 
-def image_branch():
-
+def image_branch(input_shape):
     model = keras.Sequential()
-
-    model.add(keras.layers.Flatten(input_shape=(40, 40, 1)))
-    model.add(keras.layers.Dense(1600, activation='relu'))
-    model.add(keras.layers.Dropout(0.8))
-    model.add(keras.layers.Dense(1600, activation='relu'))
-    model.add(keras.layers.Dropout(0.8))
-    model.add(keras.layers.Dense(800, activation='relu'))
-
+    model.add(keras.layers.Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape))
+    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
+    model.add(keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), padding='same', input_shape=input_shape))
+    model.add(keras.layers.MaxPooling2D((2, 2), strides=(2, 2)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(128, activation='relu'))
     return model
 
 
