@@ -18,12 +18,12 @@ def removing_background(mask, crop):
 def crop_frame(a, b, c, d, frame):
     """
     This function will crop a frame using 4 main coordinates
-    :param x1:
-    :param y1:
-    :param x2:
-    :param y2:
-    :param frame:
-    :return: frame crop
+    :param a: start row coordinate
+    :param b: end row coordinate
+    :param c: start column coordinate
+    :param d: end column coordinate
+    :param frame: image or frame that will be cropped
+    :return: cropped frame
     """
     return frame[a:b, c:d]
 

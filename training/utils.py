@@ -52,7 +52,7 @@ def cv_training(model=None, n_splits=3, x_data=[], y_data=None, path_to_save_res
         plt.clf()
 
         # saving model
-        model.save(path_to_save_results)
+        model.save(path_to_save_model)
 
         # generate generalization metrics
         scores = model.evaluate(x=[j[test_index] for j in x_data], y=y_data[test_index], verbose=True)

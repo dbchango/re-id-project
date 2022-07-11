@@ -12,6 +12,8 @@ if __name__ == '__main__':
 
     output_path = "outputs/run_1/video_1.avi"
 
+    true_class_name = 'Luis'
+
     model = MaskRCNN()
     id_model = IdentificationModel()
 
@@ -28,7 +30,6 @@ if __name__ == '__main__':
         writer.write(vidout)
         cv2.imshow("Output", o)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-
             break
     writer.release()
     cv2.destroyAllWindows()
