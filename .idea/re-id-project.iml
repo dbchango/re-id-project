@@ -8,6 +8,9 @@
       <excludeFolder url="file://$MODULE_DIR$/Mask_RCNN/mask_rcnn.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/Mask_RCNN/test" />
       <excludeFolder url="file://$MODULE_DIR$/Mask_RCNN/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/tf_model_train/models" />
+      <excludeFolder url="file://$MODULE_DIR$/Datasets" />
+      <excludeFolder url="file://$MODULE_DIR$/models" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (re-id-project)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

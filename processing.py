@@ -12,6 +12,32 @@ from PIL import Image
 from utils.histogram_color_RGB import RGBHistogram
 aug_generator = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1, zoom_range=0.1, horizontal_flip=True)
 
+def data_augmentation(path, target_path):
+    model = MaskRCNN()
+    for person in os.listdir(path):
+        person_path = os.path.join(path, person)
+        target_person_path = os.path.join(target_path, person)
+        counter = 0
+        for image_sample in os.listdir(person_path):
+            image_sample_path = os.path.join(person_path, image_sample)
+            image = cv2.imread(image_sample_path)
+            image = np.expand_dims(image, 0)
+            aug_iter = aug_generator.flow(image)
+            aug_images = [next(aug_iter)[0].astype(np.uint8) for i in range(10)]
+            for k in range(len(aug_images)):
+                counter += 1
+                aug_item = aug_images[k]
+                aug_item_cp = aug_item.copy()
+                r, _ = model.segment(aug_images[k])
+                if len(r['masks']) != 0 and len(r['rois']) != 0:
+                    x1, y1 = r["rois"][0][0], r["rois"][0][1]
+                    x2, y2 = r["rois"][0][2], r["rois"][0][3]
+                    cropped_frame = crop_frame(x1, x2, y1, y2, aug_item_cp)
+
+                    name = 'person_{}_{}.jpg'.format(person, counter)
+                    result_name = os.path.join(target_person_path, name)
+                    print('Saving {} element'.format(result_name))
+                    cv2.imwrite(result_name, cropped_frame)
 
 def save_frame(path, frame):
     """
@@ -163,13 +189,16 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
 
             print("Opening ", source_path)
             image = cv2.imread(source_path)
+            print('Copying  image ...')
             image_cp = image.copy()
+            print('Detecting people ...')
             r, _ = model.segment(image)
 
             if len(r['masks']) != 0 and len(r['rois']) != 0:
                 # for i in range(len(r["rois"])):
                 mask = r["masks"][:, :, 0].astype('uint8')
                 mask_cp = mask.copy()
+                print('Calculating mask area and perimeter ...')
                 area, perimeter = mask_area_perimeter(mask_cp)
                 class_id = person
 
@@ -183,8 +212,8 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
                 histograms.append(hist)
 
                 masked_image = lbp_2.lbp(cropped_frame)
-                lbp_image = cropped_frame.astype('uint8')
-                cropped_frame = cv2.cvtColor(cropped_frame.astype('uint8') * 255, cv2.COLOR_GRAY2RGB)
+                lbp_image = masked_image.astype('uint8')
+                lbp_image = cv2.cvtColor(lbp_image, cv2.COLOR_GRAY2RGB)
                 result_name = os.path.join(target_person_root, name)
 
                 data.append([area, perimeter, class_id])
