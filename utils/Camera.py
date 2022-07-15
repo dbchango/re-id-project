@@ -7,10 +7,13 @@ from utils.metrics.metrics import Timer
 
 
 class Camera:
-    def __init__(self, src=0):
-        self.cap = cv2.VideoCapture(src)
+    def __init__(self, src=0, id=None):
+        self.id = id
+        self.src = src
+        self.cap = cv2.VideoCapture(self.src)
 
     def read_video(self, extract_masks, id_model, target_csv_path):
+        print(f"[INFO]: camera {self.id} initialized")
         logs = []
         logs_header = ['count', 'class', 'accuracy', 'detection time', 'identification time', 'processing time', 'pre-processing time']
         self.cap.set(cv2.CAP_PROP_FPS, 25)
@@ -22,6 +25,7 @@ class Camera:
         processing_timer = Timer()
         while self.cap.isOpened():
             ret, frame = self.cap.read()
+            print(f'[INFO] reading camera {self.id} frame')
             if ret:
             # (start) frame processing flow
                 processing_timer.start()
@@ -81,5 +85,6 @@ class Camera:
 
             else:
                 break
+        print(f'Will save log file {self.id}')
         write_csv(target_csv_path, logs_header, logs)  # writing logs
         self.cap.release()

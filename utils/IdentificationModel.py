@@ -9,7 +9,6 @@ class IdentificationModel:
         self.classes_names = pd.read_csv(classes_names_path, header=None)
 
     def identify(self, x):
-
         prediction = self.model.predict(x, use_multiprocessing=True)
         class_name, accuracy = self.get_class_results(prediction)
         return class_name, accuracy
