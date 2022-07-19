@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 
-def cv_training(model=None, n_splits=3, x_data=[], y_data=None, path_to_save_results=''):
+def cv_training(model=None, n_splits=3, x_data=[], y_data=None, path_to_save_results='', batch_size=150, epochs=20):
     """
     It will train a model using cross validation technique
     :param model: model that will be trained.
@@ -26,7 +26,7 @@ def cv_training(model=None, n_splits=3, x_data=[], y_data=None, path_to_save_res
         callbacks_list = [stop_early, reduce_lr]
 
         # fitting model
-        history = model.fit(x=[i[train_index] for i in x_data], y=y_data[train_index], batch_size=150, epochs=20, validation_split=0.2)
+        history = model.fit(x=[i[train_index] for i in x_data], y=y_data[train_index], batch_size=batch_size, epochs=epochs, validation_split=0.2)
         path_to_save_model = os.path.join(path_to_save_results, f'model_{fold_no}.h5')
         path_to_save_acc_graph = os.path.join(path_to_save_results, f'acc_{fold_no}.png')
         path_to_save_loss_graph = os.path.join(path_to_save_results, f'loss_{fold_no}.png')
