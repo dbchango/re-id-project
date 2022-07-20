@@ -33,9 +33,9 @@ def image_classification(input_shape):
     return model
 
 
-def silhouette_cnn_model():
+def silhouette_cnn_model(input_shape):
     cnn_model = keras.Sequential()
-    cnn_model.add(keras.layers.Conv2D(filters=16, kernel_size=2, padding='same', activation='relu', input_shape=(40,40,3)))
+    cnn_model.add(keras.layers.Conv2D(filters=16, kernel_size=2, padding='same', activation='relu', input_shape=input_shape))
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
     cnn_model.add(keras.layers.Conv2D(filters=32, kernel_size=2, padding='same', activation='relu'))
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))

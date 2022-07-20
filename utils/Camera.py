@@ -69,7 +69,8 @@ class Camera:
 
                 # (start) identification flow
                     identificator_timer.start()
-                    predicted_name, accuracy = id_model.identify([[lbp_image], [mask_cp]])
+                    # predicted_name, accuracy = id_model.identify([[lbp_image], [mask_cp]])
+                    predicted_name, accuracy = id_model.identify([[lbp_image]])
                     identificator_timer.end()
                 # (end) identification flow
                     # labeling instance detection on frame

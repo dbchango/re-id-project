@@ -236,7 +236,7 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
     model = MaskRCNN()
     header = ['area', 'perimeter', 'class']
     data = []
-
+    empty_images = []
     for person in os.listdir(parent_root):
         person_root = os.path.join(parent_root, person)
         target_person_root = os.path.join(target_root, person)
@@ -246,8 +246,7 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
             if instance.endswith('jpg') is False:
                 continue
             counter += 1
-            name = 'person_{}_{}.jpg'.format(person, counter)
-            print('Processing {} ...'.format(name))
+
             source_path = os.path.join(person_root, instance)
             # processed_imgs_path = os.path.join(person_root, 'processed')
 
@@ -269,11 +268,18 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
                 x2, y2 = r["rois"][0][2], r["rois"][0][3]
                 cropped_frame = crop_frame(x1, x2, y1, y2, masked_image)
 
+                name = 'person_{}_{}.jpg'.format(person, counter)
+                print('Processing {} ...'.format(name))
+
                 result_name = os.path.join(target_person_root, name)
 
                 data.append([area, perimeter, class_id])
                 save_frame(result_name, cropped_frame)
-
+            else:
+                print("[INFO] No detections found")
+                empty_images.append(source_path)
+    print("Empty images: ")
+    print(empty_images)
     write_csv(csv_path, header, data)
 
 
@@ -392,3 +398,14 @@ def generate_dpm_dataset(parent_root, target_root):
 
                     print('Successfully created files')
 
+
+def count_images(dataset_path):
+    counter = 0
+
+    for data in os.listdir(dataset_path):
+        data_division = os.path.join(dataset_path, data)
+        for person in os.listdir(data_division):
+            person_root = os.path.join(data_division, person)
+            for image in os.listdir(person_root):
+                counter += 1
+    return counter

@@ -15,7 +15,7 @@ if __name__ == '__main__':
     true_class_name = 'Luis'
 
     model = MaskRCNN()
-    id_model = IdentificationModel()
+    id_model = IdentificationModel(model_path='models/own/experiments/lbp_model/experiment_1/model_1.h5')
 
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     writer = None
