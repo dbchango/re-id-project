@@ -12,7 +12,10 @@ class Camera:
         self.src = src
         self.cap = cv2.VideoCapture(self.src)
 
+
     def read_video(self, extract_masks, id_model, target_csv_path):
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
+        print(f'[INFO]: {fps} fps')
         print(f"[INFO]: camera {self.id} initialized")
         logs = []
         logs_header = ['count', 'class', 'accuracy', 'detection time', 'identification time', 'processing time', 'pre-processing time']
