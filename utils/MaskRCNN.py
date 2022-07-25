@@ -1,5 +1,6 @@
 from pixellib.instance import instance_segmentation
 
+
 class_names = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
                  'bus', 'training', 'truck', 'boat', 'traffic light',
                  'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
@@ -25,6 +26,6 @@ class MaskRCNN:
         self.target_classes = self.model.select_target_classes(person=True)
 
     def segment(self, frame):
-        r, output = self.model.segmentFrame(frame, segment_target_classes=self.target_classes, show_bboxes=True, extract_segmented_objects= True)
+        r, output = self.model.segmentFrame(frame, segment_target_classes=self.target_classes)
         return r, output
 

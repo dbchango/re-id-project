@@ -100,8 +100,7 @@ def complete_image_dataset_loading(train_data_path, test_data_path, validation_p
 
 def individual_feature_model(input_shape):
     model = image_branch(input_shape)
-    model.add(keras.layers.Dense(256, activation='softmax'))
-    model.add(keras.layers.Dense(256, activation='softmax'))
+    model.add(keras.layers.Dense(256, activation='relu'))
     model.add(keras.layers.Dense(7, activation='softmax'))
     loss_function = tf.keras.losses.CategoricalCrossentropy()
     optimization_function = tf.keras.optimizers.RMSprop(lr=1e-3)

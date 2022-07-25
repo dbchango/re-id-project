@@ -2,8 +2,9 @@ import cv2
 from utils.ReID import dpm, lbp, apply_mask, crop_frame
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
 from processing import write_csv
-import numpy as np
-from utils.metrics.metrics import Timer
+import matplotlib.pyplot as plt
+from utils.metrics.Timer import Timer
+import winsound
 
 
 class Camera:
@@ -54,11 +55,11 @@ class Camera:
                     x2, y2 = r["rois"][0][2], r["rois"][0][3]
 
                     # cropping mask and image with bounding box coordinates
-                    mask_cp = crop_frame(x1, x2, y1, y2, mask_cp).astype('uint8')
+                    mask_cp = crop_frame(x1, x2, y1, y2, mask_cp).astype('uint8') / 255  # normalization
                     cropped_frame = crop_frame(x1, x2, y1, y2, masked_image).astype('uint8')
 
                     # image filtering using LBP method
-                    lbp_image = lbp_2.lbp(cropped_frame) / 255  # normalization
+                    lbp_image = lbp_2.lbp(cropped_frame)   # normalization
 
                     # resizing images
                     mask_cp = cv2.resize(mask_cp, (40, 40))
@@ -72,10 +73,12 @@ class Camera:
 
                 # (start) identification flow
                     identificator_timer.start()
-                    # predicted_name, accuracy = id_model.identify([[lbp_image], [mask_cp]])
-                    predicted_name, accuracy = id_model.identify([[lbp_image]])
+                    predicted_name, accuracy = id_model.identify([[lbp_image], [mask_cp]])
+                    # predicted_name, accuracy = id_model.identify([[mask_cp]])
+                    # predicted_name, accuracy = id_model.identify([[lbp_image/255]])
                     identificator_timer.end()
                 # (end) identification flow
+
                     # labeling instance detection on frame
                     bbox_height = abs(x1 - x2)
                     cv2.putText(frame_cp, f'{predicted_name}', (y1, x1), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=bbox_height/300, color=(0, 255, 0),thickness=1)  # class name
@@ -89,6 +92,7 @@ class Camera:
 
             else:
                 break
+        winsound.Beep(440, 550)
         print(f'Will save log file {self.id}')
         write_csv(target_csv_path, logs_header, logs)  # writing logs
         self.cap.release()
