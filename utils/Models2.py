@@ -7,6 +7,7 @@ import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
 # batch_size=200, epochs=30
+#models of color and silhouette
 def color_histogram_branch():
     model = keras.Sequential()
     model.add(keras.layers.Dense(100, input_shape=(512, ), activation='relu'))
