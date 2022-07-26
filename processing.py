@@ -279,8 +279,11 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
     data = []
     empty_images = []
     for person in os.listdir(parent_root):
+
         person_root = os.path.join(parent_root, person)
         target_person_root = os.path.join(target_root, person)
+        if os.path.exists(target_person_root) is False:
+            crete_dir(target_person_root)
         print("Working on: ", person_root)
         counter = 0
         for instance in os.listdir(person_root):
