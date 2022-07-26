@@ -1,5 +1,5 @@
 import os
-
+import re
 import numpy as np
 from matplotlib import pyplot as plt
 from utils.ReID import *
@@ -11,6 +11,26 @@ from utils.LocalBinaryPatterns import LocalBinaryPatterns
 from PIL import Image
 from utils.histogram_color_RGB import RGBHistogram
 aug_generator = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1, zoom_range=0.1, horizontal_flip=True)
+
+
+def annotate_image_sequence(path):
+    """
+    This function will create a .csv file with ['class id', 'image path'] of each image, the files in the folder has the name like: 's{class_id}_{counter}.jpg
+    :param path:
+    :return:
+    """
+    data = []
+    header = ['class', 'path']
+    for image in os.listdir(path):
+        if image.endswith('.jpg') is False:
+            continue
+        image_path = os.path.join(path, image)
+        print(image_path)
+        divisions = re.split('_', string=image[1:])
+        data.append([divisions[0], image_path])
+    annotations_file_path = os.path.join(path, 'annotations.csv')
+    write_csv(annotations_file_path, header, data)
+
 
 def data_augmentation(path, target_path):
     model = MaskRCNN()
@@ -130,12 +150,27 @@ def write_csv(path, header, data):
             writer.writerow(header)
         writer.writerows(data)
 
-#generate silhouette
+
+def crete_dir(path):
+    """
+    Create a non-existent directory
+    :param path:
+    :return:
+    """
+    if os.path.exists(path):
+        return False
+    else:
+        os.mkdir(path)
+        return True
+
+
 def generate_masks_datasets(parent_root, target_root):
     model = MaskRCNN()
     for person in os.listdir(parent_root):
         person_root = os.path.join(parent_root, person)
         target_person_root = os.path.join(target_root, person)
+        if os.path.exists(target_person_root) is False:
+            crete_dir(target_person_root)
         print("Working on: ", person_root)
         counter = 0
         for instance in os.listdir(person_root):
@@ -148,6 +183,8 @@ def generate_masks_datasets(parent_root, target_root):
             print("Opening ", source_path)
             image = cv2.imread(source_path)
             # image_cp = image.copy()
+            if len(image.shape) is not 3:
+                continue
             r, _ = model.segment(image)
             if len(r['masks']) != 0 and len(r['rois']) != 0:
                 mask = r["masks"][:, :, 0].astype('uint8') * 255
@@ -157,6 +194,8 @@ def generate_masks_datasets(parent_root, target_root):
                 cropped_frame = crop_frame(x1, x2, y1, y2, mask_cp)
                 result_name = os.path.join(target_person_root, name)
                 save_frame(result_name, cropped_frame)
+            else:
+                print('[INFO] no instances detected')
 
 
 def generate_dataset_with_lbp(parent_root, target_root, csv_path):
@@ -175,6 +214,8 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
     for person in os.listdir(parent_root):
         person_root = os.path.join(parent_root, person)
         target_person_root = os.path.join(target_root, person)
+        if os.path.exists(target_person_root) is False:
+            crete_dir(target_person_root)
         print("Working on: ", person_root)
         counter = 0
         histograms = []
@@ -236,7 +277,7 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
     model = MaskRCNN()
     header = ['area', 'perimeter', 'class']
     data = []
-
+    empty_images = []
     for person in os.listdir(parent_root):
         person_root = os.path.join(parent_root, person)
         target_person_root = os.path.join(target_root, person)
@@ -246,8 +287,7 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
             if instance.endswith('jpg') is False:
                 continue
             counter += 1
-            name = 'person_{}_{}.jpg'.format(person, counter)
-            print('Processing {} ...'.format(name))
+
             source_path = os.path.join(person_root, instance)
             # processed_imgs_path = os.path.join(person_root, 'processed')
 
@@ -269,11 +309,18 @@ def generate_masked_dataset(parent_root, target_root, csv_path):
                 x2, y2 = r["rois"][0][2], r["rois"][0][3]
                 cropped_frame = crop_frame(x1, x2, y1, y2, masked_image)
 
+                name = 'person_{}_{}.jpg'.format(person, counter)
+                print('Processing {} ...'.format(name))
+
                 result_name = os.path.join(target_person_root, name)
 
                 data.append([area, perimeter, class_id])
                 save_frame(result_name, cropped_frame)
-
+            else:
+                print("[INFO] No detections found")
+                empty_images.append(source_path)
+    print("Empty images: ")
+    print(empty_images)
     write_csv(csv_path, header, data)
 
 
@@ -289,6 +336,8 @@ def process_dataset_with_lbp(parent_root, target_root):
 
         person_root = os.path.join(parent_root, person)
         target_person_root = os.path.join(target_root, person)
+        if os.path.exists(target_person_root) is False:
+            crete_dir(target_person_root)
         print("Working on: ", person_root)
         counter = 0
         for instance in os.listdir(person_root):
@@ -323,19 +372,8 @@ def process_dataset_with_lbp(parent_root, target_root):
                     cropped_frame = cv2.cvtColor(cropped_frame.astype('uint8') * 255, cv2.COLOR_GRAY2RGB)
 
                     result_name = os.path.join(target_person_root, name)
-                    print("Saving on: {}".format(result_name))
-                    cv2.imwrite(result_name, cropped_frame)
+                    save_frame(result_name, cropped_frame)
 
-                    cropped_frame = np.expand_dims(cropped_frame, 0)
-                    aug_iter = aug_generator.flow(cropped_frame)
-                    aug_images = [next(aug_iter)[0].astype(np.uint8) for i in range(10)]
-                    for k in range(len(aug_images)):
-                        counter += 1
-
-                        name = 'person_{}_{}.jpg'.format(person, counter)
-                        result_name = os.path.join(target_person_root, name)
-                        print('Saving {} element'.format(result_name))
-                        cv2.imwrite(result_name, aug_images[k])
 
 
 def generate_dpm_dataset(parent_root, target_root):
@@ -392,46 +430,14 @@ def generate_dpm_dataset(parent_root, target_root):
 
                     print('Successfully created files')
 
-def generate_dataset_histogram_color(parent_root,target_root,csv_path):
-    data = []  # Will hold the RGB feature vectors of each image.
-    descriptor = RGBHistogram([8, 8, 8])
-    model = MaskRCNN()
-    header = ['area', 'perimeter', 'class']
-    for person in os.listdir(parent_root):
-        person_root = os.path.join(parent_root, person)
-        target_person_root = os.path.join(target_root, person)
-        print("Working on: ", person_root)
-        counter = 0
-        histograms = []
-        for instance in os.listdir(person_root):
-            if instance.endswith('jpg') is False:
-                continue
-            counter += 1
-            name = 'person_{}_{}.jpg'.format(person, counter)
-            print('Processing {} ...'.format(name))
-            source_path = os.path.join(person_root, instance)
-            print("Opening ", source_path)
-            image = cv2.imread(source_path)
-            image_cp = image.copy()
-            r, _ = model.segment(image)
-            if len(r['masks']) != 0 and len(r['rois']) != 0:
-                # for i in range(len(r["rois"])):
-                mask = r["masks"][:, :, 0].astype('uint8')
-                mask_cp = mask.copy()
-                area, perimeter = mask_area_perimeter(mask_cp)
-                class_id = person
 
-                masked_image = apply_mask(image_cp, mask)
-                x1, y1 = r["rois"][0][0], r["rois"][0][1]
-                x2, y2 = r["rois"][0][2], r["rois"][0][3]
-                cropped_frame = crop_frame(x1, x2, y1, y2, masked_image)
-                hist = descriptor.describe(cropped_frame)
-                #print(hist)
-                hist = np.append(hist, person)
-                histograms.append(hist)
-                result_name = os.path.join(target_person_root, name)
-                data.append([area, perimeter, class_id])
+def count_images(dataset_path):
+    counter = 0
 
-        csv_path_pr = target_person_root + '/hist_{}.csv'.format(person)
-        write_csv(path=csv_path_pr, header=None, data=histograms)
-    write_csv(csv_path, header, data)
+    for data in os.listdir(dataset_path):
+        data_division = os.path.join(dataset_path, data)
+        for person in os.listdir(data_division):
+            person_root = os.path.join(data_division, person)
+            for image in os.listdir(person_root):
+                counter += 1
+    return counter

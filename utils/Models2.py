@@ -39,7 +39,6 @@ def  silhouette_cnn_model():
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
     cnn_model.add(keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu'))
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
-    
     cnn_model.add(keras.layers.Flatten())
     cnn_model.add(keras.layers.Dense(128, activation='relu'))
     cnn_model.add(keras.layers.Dense(128, activation='relu'))
