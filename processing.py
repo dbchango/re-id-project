@@ -9,7 +9,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from utils.MaskRCNN import MaskRCNN
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
 from PIL import Image
-from utils.histogram_color_RGB import RGBHistogram
 aug_generator = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1, zoom_range=0.1, horizontal_flip=True)
 
 
