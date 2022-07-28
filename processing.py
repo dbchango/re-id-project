@@ -239,7 +239,7 @@ def generate_dataset_with_lbp(parent_root, target_root, csv_path):
                 # for i in range(len(r["rois"])):
                 mask = r["masks"][:, :, 0].astype('uint8')
                 mask_cp = mask.copy()
-                print('Calculating mask area and perimeter ...')
+                print('Calculating texture area and perimeter ...')
                 area, perimeter = mask_area_perimeter(mask_cp)
                 class_id = person
 

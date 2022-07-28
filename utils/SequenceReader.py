@@ -43,7 +43,7 @@ def read_sequence(path, extract_masks, id_model, target_csv_path):
             x1, y1 = r["rois"][0][0], r["rois"][0][1]
             x2, y2 = r["rois"][0][2], r["rois"][0][3]
 
-            # cropping mask and image with bounding box coordinates
+            # cropping texture and image with bounding box coordinates
             mask_cp = crop_frame(x1, x2, y1, y2, mask_cp).astype('uint8') / 255
             cropped_frame = crop_frame(x1, x2, y1, y2, masked_image).astype('uint8')
 

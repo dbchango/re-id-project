@@ -54,7 +54,7 @@ class Camera:
                     x1, y1 = r["rois"][0][0], r["rois"][0][1]
                     x2, y2 = r["rois"][0][2], r["rois"][0][3]
 
-                    # cropping mask and image with bounding box coordinates
+                    # cropping texture and image with bounding box coordinates
                     mask_cp = crop_frame(x1, x2, y1, y2, mask_cp).astype('uint8') / 255  # normalization
                     cropped_frame = crop_frame(x1, x2, y1, y2, masked_image).astype('uint8')
 
@@ -73,9 +73,9 @@ class Camera:
 
                 # (start) identification flow
                     identificator_timer.start()
-                    predicted_name, accuracy = id_model.identify([[lbp_image], [mask_cp]])
+                    # predicted_name, accuracy = id_model.identify([[mask_cp], [lbp_image]])
                     # predicted_name, accuracy = id_model.identify([[mask_cp]])
-                    # predicted_name, accuracy = id_model.identify([[lbp_image/255]])
+                    predicted_name, accuracy = id_model.identify([[lbp_image/255]])
                     identificator_timer.end()
                 # (end) identification flow
 

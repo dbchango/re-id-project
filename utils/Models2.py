@@ -41,10 +41,10 @@ def silhouette_cnn_model(input_shape):
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
     cnn_model.add(keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu'))
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
-    cnn_model.add(keras.layers.Dropout(0.3))
     cnn_model.add(keras.layers.Flatten())
-    cnn_model.add(keras.layers.Dense(500, activation='relu'))
-    cnn_model.add(keras.layers.Dropout(0.4))
+    cnn_model.add(keras.layers.Dense(128, activation='relu'))
+    cnn_model.add(keras.layers.Dense(128, activation='relu'))
+    cnn_model.add(keras.layers.Dense(128, activation='relu'))
     cnn_model.add(keras.layers.Dense(7, activation='softmax'))
     loss_function = tf.keras.losses.CategoricalCrossentropy()
     optimization_function = tf.keras.optimizers.Adam(lr=0.0025, beta_1=0.9, beta_2=0.999, amsgrad=True)
@@ -60,10 +60,10 @@ def cnn_branch():
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
     cnn_model.add(keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu'))
     cnn_model.add(keras.layers.MaxPooling2D(pool_size=2))
-    cnn_model.add(keras.layers.Dropout(0.3))
     cnn_model.add(keras.layers.Flatten())
-    cnn_model.add(keras.layers.Dense(500, activation='relu'))
-    cnn_model.add(keras.layers.Dropout(0.4))
+    cnn_model.add(keras.layers.Dense(128, activation='relu'))
+    cnn_model.add(keras.layers.Dense(128, activation='relu'))
+    cnn_model.add(keras.layers.Dense(128, activation='relu'))
     return cnn_model
 
 
@@ -81,15 +81,16 @@ def image_branch(input_shape):
 
 
 def multi_input_model():
-    a =image_branch((40,40,3))
+    a =image_branch((40, 40, 3))
     c = cnn_branch()
     fussion = keras.layers.concatenate([a.output, c.output])
     d = keras.layers.Dense(800, activation='relu')(fussion)
-    d = keras.layers.Dropout(0.8)(d)
+    # d = keras.layers.Dropout(0.8)(d)
     d = keras.layers.Dense(800, activation='relu')(d)
-    d = keras.layers.Dropout(0.8)(d)
+    # d = keras.layers.Dropout(0.8)(d)
     d = keras.layers.Dense(7, activation='softmax')(d)
     model = keras.models.Model(inputs=[a.input, c.input], outputs=d)
     loss_function = tf.keras.losses.CategoricalCrossentropy()
     optimization_function = tf.keras.optimizers.Adam(lr=0.0025, beta_1=0.9, beta_2=0.999, amsgrad=True)
     model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
+    return model

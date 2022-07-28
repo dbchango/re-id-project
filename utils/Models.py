@@ -54,12 +54,12 @@ def image_branch(input_shape):
     return model
 
 
-def prototype_model_for_reid(input_shape):
+def prototype_model_for_reid(input_shape, output_shape):
     a = image_branch(input_shape)
     b = image_branch(input_shape)
     fussion = keras.layers.concatenate([a.output, b.output])
     c = keras.layers.Dense(256, activation='softmax')(fussion)
-    c = keras.layers.Dense(7, activation='softmax')(c)
+    c = keras.layers.Dense(output_shape, activation='softmax')(c)
     model = keras.models.Model(inputs=[a.input, b.input], outputs=c)
     loss_function = tf.keras.losses.CategoricalCrossentropy()
     optimization_function = tf.keras.optimizers.RMSprop(lr=1e-3)
