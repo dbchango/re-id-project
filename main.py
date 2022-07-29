@@ -13,22 +13,27 @@ if __name__ == '__main__':
     source_1 = 'Datasets/Propio/cameras/pasillo/cam_1/soft/Pasillo_001_sf.mp4'
     source_2 = 'Datasets/Propio/cameras/pasillo/cam_2/soft/Pasillo_001_sf.mp4'
 
-    output_path = "outputs/texture-silhouette/texture/video_1.avi"
+    output_path = "outputs/color-silhouette/combined/video_2.avi"
 
     true_class_name = 'Luis'
 
     model = MaskRCNN()
 
     # id_model = IdentificationModel(model_path='models/texture-silhouette/combined/model_3.h5')  # double input model
-    id_model = IdentificationModel(model_path='models/own/experiments/lbp_model/experiment_2/model_4.h5')  # double input model
+    # id_model = IdentificationModel(model_path='models/own/experiments/lbp_model/experiment_2/model_4.h5')  # double input model
     # id_model = IdentificationModel(model_path='models/own/experiments/sillhouette_model/experiment_2/model_3.h5')  # silhouette input model
+
+    # second work
+    # id_model = IdentificationModel(model_path='models/own/experiments/Pamela/color/experiment_0/model_3.h5')  # masked image model
+    # id_model = IdentificationModel(model_path='models/own/experiments/Pamela/silueta_2/experiment_0/model_3.h5')  # mask model
+    id_model = IdentificationModel(model_path='models/own/experiments/Pamela/color_silueta/experiment_0/model_3.h5')  # double branch model
 
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     writer = None
     (h, w) = (None, None)
 
     # for o1, o2 in zip(Camera(src=source_1, id=0).read_video(model.segment, id_model, 'outputs/run_1/cam1_detections.csv'), Camera(src=source_2, id=1).read_video(model.segment, id_model, 'outputs/run_1/cam2_detections.csv')):
-    for o in Camera(src=source_1, id=1).read_video(model.segment, id_model, 'outputs/texture-silhouette/texture/cam1_detections.csv'):
+    for o in Camera(src=source_2, id=1).read_video(model.segment, id_model, 'outputs/color-silhouette/combined/cam2_detections.csv'):
         # o = np.concatenate((o1, o2), axis=1)
         if writer is None:
             (h, w) = o.shape[:2]
