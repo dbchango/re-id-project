@@ -4,7 +4,7 @@ import numpy as np
 
 
 class IdentificationModel:
-    def __init__(self, model_path="models/own/experiments/double_branch_model/experiment_1/sample_model3.h5", classes_names_path="Datasets/classes_names.csv"):
+    def __init__(self, model_path="models/own_models/experiments/double_branch_model/run_1/sample_model3.h5", classes_names_path="Datasets/classes_names.csv"):
         self.model = tf.keras.models.load_model(model_path)
         self.classes_names = pd.read_csv(classes_names_path, header=None)
 
@@ -17,6 +17,3 @@ class IdentificationModel:
         class_id = np.argmax(prediction)
         accuracy = prediction[0][class_id]
         return self.classes_names[class_id][0], accuracy
-
-
-

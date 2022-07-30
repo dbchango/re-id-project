@@ -92,9 +92,11 @@ def load_image_dataset(path, size, gray_scale):
     :param size: Target image size
     :return image, labels: Loaded images and corresponding labels in categorical notation
     """
+    from collections import Counter
     from keras.utils import to_categorical
     labels = []
     images = []
+    counter = 0
     for person in sorted(os.listdir(path)):
         person_path = os.path.join(path, person)
         if person.endswith('.csv'):
@@ -110,7 +112,9 @@ def load_image_dataset(path, size, gray_scale):
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 image = image.reshape(size[0], size[1], 1)
             images.append(image)
-            labels.append(person)
+            labels.append(counter)
+        counter += 1
+
     labels = to_categorical(labels)
     return np.array(images), np.array(labels)
 

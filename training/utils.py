@@ -8,7 +8,7 @@ def cv_training(model=None, n_splits=3, x_data=[], y_data=None, path_to_save_res
     :param n_splits: number of folds.
     :param x_data: list of X datasets, if you have a model with more than one input, you should pass all between brackets. Ex: [a, b]
     :param y_data: list of Y datasets, if you have a model with more than one input, you should pass only one labels dataset. Ex: a
-    :param path_to_save_model: the trained model will be saved in this path. Ex: 'Datasets/own/model.h5'
+    :param path_to_save_model: the trained model will be saved in this path. Ex: 'Datasets/own_models/model.h5'
     :return:
     """
     from sklearn.model_selection import KFold

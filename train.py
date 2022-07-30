@@ -77,7 +77,7 @@ def main():
         m_score, m_acc = model.evaluate(x=x_rgb_test, y=y_rgb_test, verbose=0)
         print("[INFO] model evaluation score: {}, accuracy: {}".format(m_score, m_acc))
         print("[INFO] saving model")
-        model.save('models/own/saved_model/lbp_images_model.h5')
+        model.save('models/own_models/saved_model/lbp_images_model.h5')
     elif args.model == 'silhouette_identification':
         print("[INFO] loading and compiling model ... ")
         model = silhouette_classifier_model()
@@ -98,7 +98,7 @@ def main():
         m_score, m_acc = model.evaluate(x=x_slt_test, y=y_slt_test, verbose=1)
         print("[INFO] model evaluation score: {}, accuracy: {}".format(m_score, m_acc))
         print("[INFO] saving model")
-        model.save('models/own/saved_model/slt_model.h5')
+        model.save('models/own_models/saved_model/slt_model.h5')
 
 if __name__ == '__main__':
     main()
