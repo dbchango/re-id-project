@@ -33,8 +33,15 @@ def annotate_image_sequence(path):
 
 
 def data_augmentation(path, target_path):
+    """
+    This function creates the variations of a set of images
+    :param path: path where the original dataset is located
+    :param target_path: path where the augmented data will be saved
+    :return:
+    """
     model = MaskRCNN()
     for person in os.listdir(path):
+        os.mkdir(target_path+'/'+person)
         person_path = os.path.join(path, person)
         target_person_path = os.path.join(target_path, person)
         counter = 0
@@ -58,6 +65,7 @@ def data_augmentation(path, target_path):
                     result_name = os.path.join(target_person_path, name)
                     print('Saving {} element'.format(result_name))
                     cv2.imwrite(result_name, cropped_frame)
+
 
 def save_frame(path, frame):
     """

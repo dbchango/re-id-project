@@ -62,32 +62,34 @@ class Camera:
                     mask_cp = cv2.resize(mask_cp, (40, 40))
                     # color transformation
                     cropped_frame = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2RGB)
-                    # mask_cp = cv2.cvtColor(mask_cp, cv2.COLOR_GRAY2RGB)
+                    mask_cp = cv2.cvtColor(mask_cp, cv2.COLOR_BGR2RGB)
 
+                    # mask_cp = cv2.cvtColor(mask_cp, cv2.COLOR_GRAY2RGB)
                     # image filtering using LBP method
-                    lbp_image = lbp_2.lbp(cropped_frame)   # normalization
+                    # lbp_image = lbp_2.lbp(cropped_frame)   # normalization
 
                     # resizing images
-                    mask_cp = cv2.resize(mask_cp, (40, 40))
+                    #mask_cp = cv2.resize(mask_cp, (40, 40))
                     # cropped_frame = cv2.resize(cropped_frame, (40, 40))
-                    lbp_image = cv2.resize(lbp_image, (40, 40))
+                    # lbp_image = cv2.resize(lbp_image, (40, 40))
 
                     # reshaping - because it will specify channels number
-                    mask_cp = mask_cp.reshape(40, 40, 1)
+                    mask_cp = mask_cp.reshape(40, 40, 3)
+                    cropped_frame = cropped_frame.reshape(40, 40, 3)
                     # cropped_frame = cropped_frame.reshape(40, 40, 1)
-                    lbp_image = lbp_image.reshape(40, 40, 1)
+                    # lbp_image = lbp_image.reshape(40, 40, 1)
                     pre_processing_timer.end()
                 # (end) pre-processing flow
 
                 # (start) identification flow
                     identificator_timer.start()
                     # predicted_name, accuracy = id_model.identify([[mask_cp], [lbp_image/255]])
-                    predicted_name, accuracy = id_model.identify([[mask_cp]])
+                    #predicted_name, accuracy = id_model.identify([[mask_cp]])
                     # predicted_name, accuracy = id_model.identify([[lbp_image/255]])
-                    # predicted_name, accuracy = id_model.identify([[cropped_frame]])  # color
+                    #predicted_name, accuracy = id_model.identify([[cropped_frame]])  # color
 
 
-                    # predicted_name, accuracy = id_model.identify([[mask_cp]])  # silhouette
+                    predicted_name, accuracy = id_model.identify([[mask_cp]])  # silhouette
                     # predicted_name, accuracy = id_model.identify([[cropped_frame], [mask_cp]])  # combined
                     identificator_timer.end()
                 # (end) identification flow

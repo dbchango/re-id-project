@@ -16,9 +16,9 @@ def write_txt(path, lines):
 if __name__ == '__main__':
 
     n = 2
-    run = 'run_3'
+    run = 'run_1_5'
     model_name = 'silhouette'
-    output_folder_path = 'outputs/video/texture-silhouette/own/silhouette'
+    output_folder_path = 'outputs/video/color-silhouette/silhouette/'
     base_path = os.path.join(output_folder_path, run)
 
 
@@ -32,12 +32,22 @@ if __name__ == '__main__':
 
     model = MaskRCNN()
 
+    # if model_name == 'combined':
+    #     id_model = IdentificationModel(model_path='models/texture-silhouette/own/combined/model_3.h5')  # double input model
+    # if model_name == 'silhouette':
+    #     id_model = IdentificationModel(model_path='models/texture-silhouette/own/silhouette/model_1.h5')  # double input model
+    # if model_name == 'texture':
+    #     id_model = IdentificationModel(model_path='models/texture-silhouette/own/textures/model_1.h5')  # silhouette input model
+
     if model_name == 'combined':
-        id_model = IdentificationModel(model_path='models/texture-silhouette/own/combined/model_3.h5')  # double input model
+        id_model = IdentificationModel(
+            model_path='models/color-silhouette/own/color_silueta/experiment_0/model_2.h5')  # double input model
     if model_name == 'silhouette':
-        id_model = IdentificationModel(model_path='models/texture-silhouette/own/silhouette/model_1.h5')  # double input model
-    if model_name == 'textures':
-        id_model = IdentificationModel(model_path='models/texture-silhouette/own/textures/model_1.h5')  # silhouette input model
+        id_model = IdentificationModel(
+            model_path='models/color-silhouette/own/silueta_2/experiment_0/model_1.h5')  # double input model
+    if model_name == 'color':
+        id_model = IdentificationModel(
+            model_path='models/color-silhouette/own/color/experiment_0/model_1.h5')  # silhouette input model#3
 
     # second work
     # id_model = IdentificationModel(model_path='models/own/experiments/Pamela/own/color/experiment_0/model_3.h5')  # masked image model
