@@ -8,7 +8,7 @@ import csv
 from keras.preprocessing.image import ImageDataGenerator
 from utils.MaskRCNN import MaskRCNN
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
-from PIL import Image
+import logging
 
 aug_generator = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1, zoom_range=0.1, horizontal_flip=True)
 
@@ -74,7 +74,7 @@ def save_frame(path, frame):
     :param frame: Given frame
     :return: None
     """
-    print('Saving file on {}'.format(path))
+    logging.info('Saving data on {} route'.format(path))
     cv2.imwrite(path, frame)
     # Image.fromarray(frame).save(path)
 
@@ -170,9 +170,11 @@ def crete_dir(path):
     :return:
     """
     if os.path.exists(path):
+        logging.warning(f'Directory {path} already exists.')
         return False
     else:
         os.mkdir(path)
+        logging.info(f'Directory {path} was created.')
         return True
 
 

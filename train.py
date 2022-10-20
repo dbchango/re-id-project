@@ -2,7 +2,7 @@ import argparse
 from utils.Models import lbp_image_classification, silhouette_classifier_model
 import tensorflow as tf
 import pandas as pd
-from processing import load_image_dataset, load_csv_data, slice_labels
+from utils.processing import load_image_dataset, load_csv_data, slice_labels
 import matplotlib.pyplot as plt
 
 

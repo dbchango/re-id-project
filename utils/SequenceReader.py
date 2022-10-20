@@ -3,7 +3,7 @@ import cv2
 from utils.ReID import crop_frame, apply_mask
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
 from utils.metrics.Timer import Timer
-from processing import write_csv
+from utils.processing import write_csv
 import winsound
 
 

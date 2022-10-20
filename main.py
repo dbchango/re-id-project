@@ -25,8 +25,8 @@ if __name__ == '__main__':
     timer = Timer()
     timer.start()
     tracing_start()
-    source_1 = 'Datasets/Propio/cameras/pasillo/cam_1/soft/Pasillo_001_sf.mp4'
-    source_2 = 'Datasets/Propio/cameras/pasillo/cam_2/soft/Pasillo_001_sf.mp4'
+    source_1 = 'Datasets/experiments/videos/pasillo/cam_1/soft/Pasillo_001_sf.mp4'
+    source_2 = 'Datasets/experiments/videos/pasillo/cam_1/soft/Pasillo_001_sf.mp4'
 
     output_video_path = os.path.join(base_path, f'video_{n}.avi')
 

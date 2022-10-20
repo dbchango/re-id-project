@@ -1,6 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 
+
 def cv_training(model=None, n_splits=3, x_data=[], y_data=None, path_to_save_results='', batch_size=150, epochs=20):
     """
     It will train a model using cross validation technique

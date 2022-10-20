@@ -18,7 +18,7 @@ class_names = ['background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane
                  'teddy bear', 'hair drier', 'toothbrush']
 
 class MaskRCNN:
-    def __init__(self, weights_path="models/mask_rcnn_coco.h5"):
+    def __init__(self, weights_path="D:/GitHub/re-id-project/models/mask_rcnn_coco.h5"):
         self.weights_path = weights_path
         # load model
         self.model = instance_segmentation()

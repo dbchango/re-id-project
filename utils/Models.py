@@ -80,29 +80,3 @@ def lbp_image_classification(input_shape):
     optimization_function = tf.keras.optimizers.RMSprop(lr=1e-3)
     model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
     return model
-
-
-def generate_image_dataset(train_data_path, test_data_path, validation_path, target_size):
-    gen = ImageDataGenerator()
-    train_gen = gen.flow_from_directory(train_data_path, target_size=target_size, class_mode='categorical', shuffle=False, color_mode='grayscale')
-    validation_gen = gen.flow_from_directory(validation_path, target_size=target_size, class_mode='categorical', shuffle=False, color_mode='grayscale')
-    test_gen = gen.flow_from_directory(test_data_path, target_size=target_size, class_mode='categorical', shuffle=False, color_mode='grayscale')
-    return train_gen, test_gen, validation_gen
-
-
-def complete_image_dataset_loading(train_data_path, test_data_path, validation_path, target_size):
-    from processing import load_image_dataset
-    (rgb_train) = load_image_dataset('Datasets/espe/base/training', target_size, True)
-    (rgb_test) = load_image_dataset('Datasets/espe/base/test', target_size, True)
-    (rgb_validation) = load_image_dataset('Datasets/espe/base/validation', target_size, True)
-    return rgb_train, rgb_test, rgb_validation
-
-
-def individual_feature_model(input_shape, output_shape):
-    model = image_branch(input_shape)
-    model.add(keras.layers.Dense(256, activation='relu'))
-    model.add(keras.layers.Dense(output_shape, activation='softmax'))
-    loss_function = tf.keras.losses.CategoricalCrossentropy()
-    optimization_function = tf.keras.optimizers.RMSprop(lr=1e-3)
-    model.compile(loss=loss_function, optimizer=optimization_function, metrics=['acc'])
-    return model

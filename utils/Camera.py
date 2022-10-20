@@ -1,8 +1,7 @@
 import cv2
-from utils.ReID import dpm, lbp, apply_mask, crop_frame
+from utils.ReID import apply_mask, crop_frame, dpm
 from utils.LocalBinaryPatterns import LocalBinaryPatterns
-from processing import write_csv
-import matplotlib.pyplot as plt
+from utils.processing import write_csv
 from utils.metrics.Timer import Timer
 import winsound
 
@@ -53,6 +52,8 @@ class Camera:
                     # bb_box coordinates
                     x1, y1 = r["rois"][0][0], r["rois"][0][1]
                     x2, y2 = r["rois"][0][2], r["rois"][0][3]
+
+                    h_crop, t_crop, l_crop = dpm(r['rois'][0], frame)
 
                     # cropping texture and image with bounding box coordinates
                     # mask_cp = crop_frame(x1, x2, y1, y2, mask_cp).astype('uint8') / 255  # normalization

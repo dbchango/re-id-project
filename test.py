@@ -1,10 +1,9 @@
-import cv2
 #from utils.SequenceReader import read_sequence
 from utils.SequenceReader import read_sequence_color
 from utils.MaskRCNN import MaskRCNN
 from utils.IdentificationModel import IdentificationModel
 import os
-from processing import save_frame
+from utils.processing import save_frame
 seg = MaskRCNN()
 
 if __name__ == '__main__':
